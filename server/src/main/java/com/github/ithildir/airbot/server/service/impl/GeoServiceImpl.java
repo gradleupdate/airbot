@@ -26,20 +26,14 @@ import com.github.ithildir.airbot.server.model.CityAndState;
 import com.github.ithildir.airbot.server.service.GeoService;
 import com.github.ithildir.airbot.server.util.StringUtils;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.core.parsetools.RecordParser;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 
@@ -50,9 +44,12 @@ import java.util.regex.Pattern;
 /**
  * @author Andrea Di Giorgi
  */
-public class GeoServiceImpl implements GeoService {
+public class GeoServiceImpl
+	extends BaseRecordServiceImpl implements GeoService {
 
 	public GeoServiceImpl(Vertx vertx, JsonObject configJsonObject) {
+		super(vertx, configJsonObject);
+
 		SharedData sharedData = vertx.sharedData();
 
 		_cityAndStateZipCodesMap = sharedData.getLocalMap(
@@ -60,9 +57,6 @@ public class GeoServiceImpl implements GeoService {
 		_zipCodeCityAndStatesMap = sharedData.getLocalMap(
 			GeoServiceImpl.class.getName() + ".zipCodeCityAndStates");
 
-		_dbLineDelimiter = Objects.requireNonNull(
-			configJsonObject.getString("dbLineDelimiter"));
-		_dbUrl = Objects.requireNonNull(configJsonObject.getString("dbUrl"));
 		_dbValueDelimiterPattern = Objects.requireNonNull(
 			configJsonObject.getString("dbValueDelimiterPattern"));
 		_dbValueIndexCity = Objects.requireNonNull(
@@ -71,11 +65,6 @@ public class GeoServiceImpl implements GeoService {
 			configJsonObject.getInteger("dbValueIndexState"));
 		_dbValueIndexZipCode = Objects.requireNonNull(
 			configJsonObject.getInteger("dbValueIndexZipCode"));
-
-		HttpClientOptions httpClientOptions = new HttpClientOptions(
-			configJsonObject);
-
-		_httpClient = vertx.createHttpClient(httpClientOptions);
 	}
 
 	@Override
@@ -112,41 +101,17 @@ public class GeoServiceImpl implements GeoService {
 	}
 
 	@Override
-	public void init(Handler<AsyncResult<Void>> handler) {
-		HttpClientRequest httpClientRequest = _httpClient.getAbs(_dbUrl);
-
-		RecordParser recordParser = RecordParser.newDelimited(
-			_dbLineDelimiter, this::_init);
-
-		httpClientRequest.endHandler(
-			v -> {
-				handler.handle(Future.succeededFuture());
-			});
-
-		httpClientRequest.handler(
-			httpClientResponse -> {
-				int statusCode = httpClientResponse.statusCode();
-
-				if (statusCode != HttpResponseStatus.OK.code()) {
-					handler.handle(
-						Future.failedFuture(
-							httpClientResponse.statusMessage()));
-
-					return;
-				}
-
-				httpClientResponse.bodyHandler(recordParser::handle);
-			});
-
-		httpClientRequest.exceptionHandler(
-			t -> {
-				handler.handle(Future.failedFuture(t));
-			});
-
-		httpClientRequest.end();
+	protected String getConfigKeyDelimiter() {
+		return "dbLineDelimiter";
 	}
 
-	private void _init(Buffer buffer) {
+	@Override
+	protected String getConfigKeyUrl() {
+		return "dbUrl";
+	}
+
+	@Override
+	protected void init(Buffer buffer) {
 		String line = buffer.toString();
 
 		String[] values = line.split(_dbValueDelimiterPattern);
@@ -178,13 +143,10 @@ public class GeoServiceImpl implements GeoService {
 	private static final Pattern _zipCodePattern = Pattern.compile("\\d{5}");
 
 	private final LocalMap<CityAndState, String> _cityAndStateZipCodesMap;
-	private final String _dbLineDelimiter;
-	private final String _dbUrl;
 	private final String _dbValueDelimiterPattern;
 	private final int _dbValueIndexCity;
 	private final int _dbValueIndexState;
 	private final int _dbValueIndexZipCode;
-	private final HttpClient _httpClient;
 	private final LocalMap<String, CityAndState> _zipCodeCityAndStatesMap;
 
 }

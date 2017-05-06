@@ -19,28 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.github.ithildir.airbot.server.service;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.serviceproxy.ProxyHelper;
 
 /**
  * @author Andrea Di Giorgi
  */
-public interface GeoService extends RecordService {
+public interface RecordService {
 
-	public static final String ADDRESS = GeoService.class.getName();
-
-	public static GeoService getInstance(Vertx vertx) {
-		return ProxyHelper.createProxy(GeoService.class, vertx, ADDRESS);
-	}
-
-	public void getState(String zipCode, Handler<AsyncResult<String>> handler);
-
-	public void getZipCode(
-		String city, String region, Handler<AsyncResult<String>> handler);
+	public void init(Handler<AsyncResult<Void>> handler);
 
 }
