@@ -94,6 +94,29 @@ public class GeoServiceImplTest {
 	}
 
 	@Test
+	public void testGetState(TestContext testContext) {
+		Async async = testContext.async(2);
+
+		_geoServiceImpl.getState(
+			"00705",
+			asyncResult -> {
+				testContext.assertEquals("PR", asyncResult.result());
+
+				async.countDown();
+			});
+
+		_geoServiceImpl.getState(
+			"00000",
+			asyncResult -> {
+				testContext.assertTrue(asyncResult.failed());
+
+				async.countDown();
+			});
+
+		async.awaitSuccess();
+	}
+
+	@Test
 	public void testGetZipCode(TestContext testContext) {
 		Async async = testContext.async(2);
 

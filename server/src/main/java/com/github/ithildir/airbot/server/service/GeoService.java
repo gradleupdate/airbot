@@ -38,6 +38,8 @@ public interface GeoService {
 		return ProxyHelper.createProxy(GeoService.class, vertx, ADDRESS);
 	}
 
+	public void getState(String zipCode, Handler<AsyncResult<String>> handler);
+
 	public void getZipCode(
 		String city, String region, Handler<AsyncResult<String>> handler);
 

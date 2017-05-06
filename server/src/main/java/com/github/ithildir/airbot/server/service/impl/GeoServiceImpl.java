@@ -57,6 +57,8 @@ public class GeoServiceImpl implements GeoService {
 
 		_cityAndStateZipCodesMap = sharedData.getLocalMap(
 			GeoServiceImpl.class.getName() + ".cityAndStateZipCodes");
+		_zipCodeCityAndStatesMap = sharedData.getLocalMap(
+			GeoServiceImpl.class.getName() + ".zipCodeCityAndStates");
 
 		_dbLineDelimiter = Objects.requireNonNull(
 			configJsonObject.getString("dbLineDelimiter"));
@@ -74,6 +76,20 @@ public class GeoServiceImpl implements GeoService {
 			configJsonObject);
 
 		_httpClient = vertx.createHttpClient(httpClientOptions);
+	}
+
+	@Override
+	public void getState(String zipCode, Handler<AsyncResult<String>> handler) {
+		CityAndState cityAndState = _zipCodeCityAndStatesMap.get(zipCode);
+
+		if (cityAndState == null) {
+			handler.handle(
+				Future.failedFuture("Unable to find state of " + zipCode));
+
+			return;
+		}
+
+		handler.handle(Future.succeededFuture(cityAndState.getState()));
 	}
 
 	@Override
@@ -153,6 +169,7 @@ public class GeoServiceImpl implements GeoService {
 		CityAndState cityAndState = new CityAndState(city, state);
 
 		_cityAndStateZipCodesMap.put(cityAndState, zipCode);
+		_zipCodeCityAndStatesMap.put(zipCode, cityAndState);
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(
@@ -168,5 +185,6 @@ public class GeoServiceImpl implements GeoService {
 	private final int _dbValueIndexState;
 	private final int _dbValueIndexZipCode;
 	private final HttpClient _httpClient;
+	private final LocalMap<String, CityAndState> _zipCodeCityAndStatesMap;
 
 }
