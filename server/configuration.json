@@ -1,0 +1,10 @@
+{
+	"geo": {
+		"dbLineDelimiter": "\r\n",
+		"dbUrl": "http://federalgovernmentzipcodes.us/free-zipcode-database-Primary.csv",
+		"dbValueDelimiterPattern": ",",
+		"dbValueIndexCity": 2,
+		"dbValueIndexState": 3,
+		"dbValueIndexZipCode": 0
+	}
+}

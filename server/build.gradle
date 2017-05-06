@@ -1,0 +1,70 @@
+buildscript {
+	dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
+	}
+
+	repositories {
+		jcenter()
+	}
+}
+
+def generatedSrcDir = file("src/generated/java")
+
+apply plugin: "application"
+apply plugin: "com.liferay.source.formatter"
+apply plugin: "jacoco"
+
+task generateServiceProxies(type: JavaCompile)
+
+group = "com.github.ithildir"
+mainClassName = "io.vertx.core.Launcher"
+sourceCompatibility = 1.8
+
+check {
+	dependsOn checkSourceFormatting
+}
+
+clean {
+	delete generatedSrcDir.parentFile
+}
+
+compileJava {
+	dependsOn generateServiceProxies
+
+	source generatedSrcDir
+}
+
+dependencies {
+	compile group: "io.vertx", name: "vertx-core", version: vertxVersion
+	compile group: "io.vertx", name: "vertx-service-proxy", version: vertxVersion
+	compile group: "org.apache.commons", name: "commons-lang3", version: "3.5"
+
+	compileOnly group: "io.vertx", name: "vertx-codegen", version: vertxVersion
+
+	testCompile group: "io.vertx", name: "vertx-unit", version: vertxVersion
+	testCompile group: "junit", name: "junit", version: "4.12"
+}
+
+generateServiceProxies {
+	classpath = sourceSets.main.compileClasspath
+	description = "Generates the Vert.x service proxies."
+	destinationDir = generatedSrcDir
+
+	options.compilerArgs = [
+		"-proc:only",
+		"-processor", "io.vertx.codegen.CodeGenProcessor",
+		"-Acodegen.output=${projectDir}/src/main"]
+
+	source = sourceSets.main.java
+}
+
+repositories {
+	jcenter()
+}
+
+run {
+	args "run", "com.github.ithildir.airbot.server.AirBotServerVerticle"
+	args "-conf", "configuration.json"
+
+	systemProperty "vertx.disableDnsResolver", true
+}
