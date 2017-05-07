@@ -22,13 +22,18 @@
 
 package com.github.ithildir.airbot.server.test.util;
 
+import com.github.ithildir.airbot.server.util.StringUtils;
+
 import io.netty.handler.codec.http.HttpResponseStatus;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -38,14 +43,21 @@ import org.apache.commons.lang3.ArrayUtils;
 public class TestUtil {
 
 	public static Future<HttpServer> serveFiles(
-		Vertx vertx, String... fileNames) {
+		Vertx vertx, AtomicInteger httpServerRequestsCounter,
+		String... fileNames) {
 
 		Future<HttpServer> future = Future.future();
 
 		HttpServer httpServer = vertx.createHttpServer();
 
+		String eTag = String.valueOf(System.currentTimeMillis());
+
 		httpServer.requestHandler(
 			httpServerRequest -> {
+				if (httpServerRequestsCounter != null) {
+					httpServerRequestsCounter.incrementAndGet();
+				}
+
 				HttpServerResponse httpServerResponse =
 					httpServerRequest.response();
 
@@ -53,10 +65,21 @@ public class TestUtil {
 
 				path = path.substring(1);
 
-				if (ArrayUtils.contains(fileNames, path)) {
-					httpServerResponse.putHeader(
-						HttpHeaders.ETAG,
-						String.valueOf(System.currentTimeMillis()));
+				String erroredMethod = httpServerRequest.getParam(
+					"erroredMethod");
+
+				HttpMethod httpMethod = httpServerRequest.method();
+
+				if (StringUtils.equalsIgnoreCase(
+						erroredMethod, httpMethod.name())) {
+
+					httpServerResponse.setStatusCode(
+						HttpResponseStatus.BAD_REQUEST.code());
+
+					httpServerResponse.end();
+				}
+				else if (ArrayUtils.contains(fileNames, path)) {
+					httpServerResponse.putHeader(HttpHeaders.ETAG, eTag);
 
 					httpServerResponse.sendFile(path);
 				}

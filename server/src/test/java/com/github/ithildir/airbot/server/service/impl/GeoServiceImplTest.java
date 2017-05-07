@@ -30,16 +30,16 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 
 import java.io.IOException;
 
 import java.net.ServerSocket;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,16 +49,12 @@ import org.junit.runner.RunWith;
 @RunWith(VertxUnitRunner.class)
 public class GeoServiceImplTest {
 
-	@ClassRule
-	public static final RunTestOnContext runTestOnContext =
-		new RunTestOnContext();
-
 	@BeforeClass
 	public static void setUpClass(TestContext testContext) {
-		Vertx vertx = runTestOnContext.vertx();
+		_vertx = Vertx.vertx();
 
 		Future<HttpServer> httpServerFuture = TestUtil.serveFiles(
-			vertx, _DB_FILE_NAME);
+			_vertx, _httpServerRequestsCounter, _DB_FILE_NAME);
 
 		Future<Void> initFuture = httpServerFuture.compose(
 			httpServer -> {
@@ -78,7 +74,7 @@ public class GeoServiceImplTest {
 				configJsonObject.put("dbValueIndexState", 3);
 				configJsonObject.put("dbValueIndexZipCode", 0);
 
-				_geoServiceImpl = new GeoServiceImpl(vertx, configJsonObject);
+				_geoServiceImpl = new GeoServiceImpl(_vertx, configJsonObject);
 
 				_geoServiceImpl.init(future.completer());
 
@@ -140,8 +136,26 @@ public class GeoServiceImplTest {
 	}
 
 	@Test
-	public void testInitException(TestContext testContext) throws IOException {
-		Vertx vertx = runTestOnContext.vertx();
+	public void testInitSkip(TestContext testContext) {
+		Async async = testContext.async();
+
+		_httpServerRequestsCounter.set(0);
+
+		_geoServiceImpl.init(
+			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
+				testContext.assertEquals(1, _httpServerRequestsCounter.get());
+
+				async.complete();
+			});
+
+		async.awaitSuccess();
+	}
+
+	@Test
+	public void testInitWrongDbUrlHost(TestContext testContext)
+		throws IOException {
 
 		int port = 0;
 
@@ -159,15 +173,33 @@ public class GeoServiceImplTest {
 		configJsonObject.put("dbValueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
-			vertx, configJsonObject);
+			_vertx, configJsonObject);
 
 		geoServiceImpl.init(testContext.asyncAssertFailure());
 	}
 
 	@Test
-	public void testInitWrongDbUrl(TestContext testContext) {
-		Vertx vertx = runTestOnContext.vertx();
+	public void testInitWrongDbUrlMethod(TestContext testContext) {
+		JsonObject configJsonObject = new JsonObject();
 
+		configJsonObject.put("dbLineDelimiter", System.lineSeparator());
+		configJsonObject.put(
+			"dbUrl",
+			"http://localhost:" + _httpServer.actualPort() + "/" +
+				_DB_FILE_NAME + "?erroredMethod=get");
+		configJsonObject.put("dbValueDelimiterPattern", ",");
+		configJsonObject.put("dbValueIndexCity", 2);
+		configJsonObject.put("dbValueIndexState", 3);
+		configJsonObject.put("dbValueIndexZipCode", 0);
+
+		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
+			_vertx, configJsonObject);
+
+		geoServiceImpl.init(testContext.asyncAssertFailure());
+	}
+
+	@Test
+	public void testInitWrongDbUrlPath(TestContext testContext) {
 		JsonObject configJsonObject = new JsonObject();
 
 		configJsonObject.put("dbLineDelimiter", System.lineSeparator());
@@ -179,7 +211,7 @@ public class GeoServiceImplTest {
 		configJsonObject.put("dbValueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
-			vertx, configJsonObject);
+			_vertx, configJsonObject);
 
 		geoServiceImpl.init(testContext.asyncAssertFailure());
 	}
@@ -189,5 +221,8 @@ public class GeoServiceImplTest {
 
 	private static GeoServiceImpl _geoServiceImpl;
 	private static HttpServer _httpServer;
+	private static final AtomicInteger _httpServerRequestsCounter =
+		new AtomicInteger();
+	private static Vertx _vertx;
 
 }
