@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 
@@ -53,6 +54,10 @@ public class TestUtil {
 				path = path.substring(1);
 
 				if (ArrayUtils.contains(fileNames, path)) {
+					httpServerResponse.putHeader(
+						HttpHeaders.ETAG,
+						String.valueOf(System.currentTimeMillis()));
+
 					httpServerResponse.sendFile(path);
 				}
 				else {

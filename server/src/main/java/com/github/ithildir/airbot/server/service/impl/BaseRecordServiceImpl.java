@@ -23,6 +23,7 @@
 package com.github.ithildir.airbot.server.service.impl;
 
 import com.github.ithildir.airbot.server.service.RecordService;
+import com.github.ithildir.airbot.server.util.StringUtils;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 
@@ -34,8 +35,13 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.parsetools.RecordParser;
+import io.vertx.core.shareddata.LocalMap;
+import io.vertx.core.shareddata.SharedData;
 
 import java.util.Objects;
 
@@ -54,41 +60,61 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			configJsonObject);
 
 		_httpClient = vertx.createHttpClient(httpClientOptions);
+
+		Class<?> clazz = getClass();
+
+		_serviceName = clazz.getName();
+
+		SharedData sharedData = vertx.sharedData();
+
+		_urlETags = sharedData.getLocalMap(
+			BaseRecordServiceImpl.class.getName() + ".eTags");
 	}
 
 	@Override
 	public void init(Handler<AsyncResult<Void>> handler) {
-		HttpClientRequest httpClientRequest = _httpClient.getAbs(_url);
+		Future<String> eTagFuture = _getETag();
 
-		RecordParser recordParser = RecordParser.newDelimited(
-			_delimiter, this::init);
+		eTagFuture = eTagFuture.compose(
+			eTag -> {
+				String previousETag = _urlETags.get(_url);
 
-		httpClientRequest.endHandler(
-			v -> {
-				handler.handle(Future.succeededFuture());
+				if (StringUtils.equalsIgnoreCase(eTag, previousETag)) {
+					if (_logger.isDebugEnabled()) {
+						_logger.debug(
+							"{0} data is already up-to-date with ETag {1}",
+							_serviceName, eTag);
+					}
+
+					return Future.succeededFuture();
+				}
+
+				if (_logger.isInfoEnabled()) {
+					_logger.info(
+						"{0} data is out-of-date: previous ({1}) and current " +
+							"({2}) ETags do not match",
+						_serviceName, previousETag, eTag);
+				}
+
+				return _init();
 			});
 
-		httpClientRequest.handler(
-			httpClientResponse -> {
-				int statusCode = httpClientResponse.statusCode();
-
-				if (statusCode != HttpResponseStatus.OK.code()) {
-					handler.handle(
-						Future.failedFuture(
-							httpClientResponse.statusMessage()));
+		eTagFuture.setHandler(
+			asyncResult -> {
+				if (asyncResult.failed()) {
+					handler.handle(Future.failedFuture(asyncResult.cause()));
 
 					return;
 				}
 
-				httpClientResponse.bodyHandler(recordParser::handle);
-			});
+				String eTag = asyncResult.result();
 
-		httpClientRequest.exceptionHandler(
-			t -> {
-				handler.handle(Future.failedFuture(t));
-			});
+				if (StringUtils.isNotBlank(eTag)) {
+					_urlETags.put(_url, eTag);
+				}
 
-		httpClientRequest.end();
+				handler.handle(Future.succeededFuture());
+			});
 	}
 
 	protected abstract String getConfigKeyDelimiter();
@@ -97,8 +123,83 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 
 	protected abstract void init(Buffer buffer);
 
+	private Future<String> _getETag() {
+		Future<String> future = Future.future();
+
+		HttpClientRequest httpClientRequest = _httpClient.headAbs(_url);
+
+		httpClientRequest.handler(
+			httpClientResponse -> {
+				int statusCode = httpClientResponse.statusCode();
+
+				if (statusCode != HttpResponseStatus.OK.code()) {
+					future.fail(httpClientResponse.statusMessage());
+
+					return;
+				}
+
+				String eTag = httpClientResponse.getHeader(HttpHeaders.ETAG);
+
+				future.complete(eTag);
+			});
+
+		httpClientRequest.exceptionHandler(future::fail);
+
+		httpClientRequest.end();
+
+		return future;
+	}
+
+	private Future<String> _init() {
+		Future<String> future = Future.future();
+
+		HttpClientRequest httpClientRequest = _httpClient.getAbs(_url);
+
+		httpClientRequest.handler(
+			httpClientResponse -> {
+				int statusCode = httpClientResponse.statusCode();
+
+				if (statusCode != HttpResponseStatus.OK.code()) {
+					future.fail(httpClientResponse.statusMessage());
+
+					return;
+				}
+
+				String eTag = httpClientResponse.getHeader(HttpHeaders.ETAG);
+
+				RecordParser recordParser = RecordParser.newDelimited(
+					_delimiter, this::init);
+
+				httpClientResponse.handler(recordParser::handle);
+
+				httpClientResponse.endHandler(
+					v -> {
+						if (_logger.isInfoEnabled()) {
+							_logger.info(
+								"{0} data updated based on ETag {1}",
+								_serviceName, eTag);
+						}
+
+						future.complete(eTag);
+					});
+
+				httpClientResponse.exceptionHandler(future::fail);
+			});
+
+		httpClientRequest.exceptionHandler(future::fail);
+
+		httpClientRequest.end();
+
+		return future;
+	}
+
+	private static final Logger _logger = LoggerFactory.getLogger(
+		BaseRecordServiceImpl.class);
+
 	private final String _delimiter;
 	private final HttpClient _httpClient;
+	private final String _serviceName;
 	private final String _url;
+	private final LocalMap<String, String> _urlETags;
 
 }
