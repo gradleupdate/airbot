@@ -1,4 +1,11 @@
 {
+	"area": {
+		"delimiter": "\n",
+		"url": "https://files.airnowtech.org/airnow/yesterday/cityzipcodes.csv",
+		"valueDelimiterPattern": "\\|",
+		"valueIndexArea": 0,
+		"valueIndexZipCode": 2
+	},
 	"geo": {
 		"delimiter": "\r\n",
 		"url": "http://federalgovernmentzipcodes.us/free-zipcode-database-Primary.csv",
