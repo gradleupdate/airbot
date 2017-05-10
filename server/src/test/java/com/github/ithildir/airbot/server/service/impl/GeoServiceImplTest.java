@@ -64,15 +64,15 @@ public class GeoServiceImplTest {
 
 				JsonObject configJsonObject = new JsonObject();
 
-				configJsonObject.put("dbLineDelimiter", System.lineSeparator());
+				configJsonObject.put("delimiter", System.lineSeparator());
 				configJsonObject.put(
-					"dbUrl",
+					"url",
 					"http://localhost:" + _httpServer.actualPort() + "/" +
 						_DB_FILE_NAME);
-				configJsonObject.put("dbValueDelimiterPattern", ",");
-				configJsonObject.put("dbValueIndexCity", 2);
-				configJsonObject.put("dbValueIndexState", 3);
-				configJsonObject.put("dbValueIndexZipCode", 0);
+				configJsonObject.put("valueDelimiterPattern", ",");
+				configJsonObject.put("valueIndexCity", 2);
+				configJsonObject.put("valueIndexState", 3);
+				configJsonObject.put("valueIndexZipCode", 0);
 
 				_geoServiceImpl = new GeoServiceImpl(_vertx, configJsonObject);
 
@@ -165,12 +165,12 @@ public class GeoServiceImplTest {
 
 		JsonObject configJsonObject = new JsonObject();
 
-		configJsonObject.put("dbLineDelimiter", System.lineSeparator());
-		configJsonObject.put("dbUrl", "http://localhost:" + port);
-		configJsonObject.put("dbValueDelimiterPattern", ",");
-		configJsonObject.put("dbValueIndexCity", 2);
-		configJsonObject.put("dbValueIndexState", 3);
-		configJsonObject.put("dbValueIndexZipCode", 0);
+		configJsonObject.put("delimiter", System.lineSeparator());
+		configJsonObject.put("url", "http://localhost:" + port);
+		configJsonObject.put("valueDelimiterPattern", ",");
+		configJsonObject.put("valueIndexCity", 2);
+		configJsonObject.put("valueIndexState", 3);
+		configJsonObject.put("valueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
@@ -182,15 +182,15 @@ public class GeoServiceImplTest {
 	public void testInitWrongDbUrlMethod(TestContext testContext) {
 		JsonObject configJsonObject = new JsonObject();
 
-		configJsonObject.put("dbLineDelimiter", System.lineSeparator());
+		configJsonObject.put("delimiter", System.lineSeparator());
 		configJsonObject.put(
-			"dbUrl",
+			"url",
 			"http://localhost:" + _httpServer.actualPort() + "/" +
 				_DB_FILE_NAME + "?erroredMethod=get");
-		configJsonObject.put("dbValueDelimiterPattern", ",");
-		configJsonObject.put("dbValueIndexCity", 2);
-		configJsonObject.put("dbValueIndexState", 3);
-		configJsonObject.put("dbValueIndexZipCode", 0);
+		configJsonObject.put("valueDelimiterPattern", ",");
+		configJsonObject.put("valueIndexCity", 2);
+		configJsonObject.put("valueIndexState", 3);
+		configJsonObject.put("valueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
@@ -202,13 +202,13 @@ public class GeoServiceImplTest {
 	public void testInitWrongDbUrlPath(TestContext testContext) {
 		JsonObject configJsonObject = new JsonObject();
 
-		configJsonObject.put("dbLineDelimiter", System.lineSeparator());
+		configJsonObject.put("delimiter", System.lineSeparator());
 		configJsonObject.put(
-			"dbUrl", "http://localhost:" + _httpServer.actualPort() + "/foo");
-		configJsonObject.put("dbValueDelimiterPattern", ",");
-		configJsonObject.put("dbValueIndexCity", 2);
-		configJsonObject.put("dbValueIndexState", 3);
-		configJsonObject.put("dbValueIndexZipCode", 0);
+			"url", "http://localhost:" + _httpServer.actualPort() + "/foo");
+		configJsonObject.put("valueDelimiterPattern", ",");
+		configJsonObject.put("valueIndexCity", 2);
+		configJsonObject.put("valueIndexState", 3);
+		configJsonObject.put("valueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);

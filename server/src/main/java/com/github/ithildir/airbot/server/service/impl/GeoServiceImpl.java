@@ -57,12 +57,12 @@ public class GeoServiceImpl
 		_zipCodeCityAndStatesMap = sharedData.getLocalMap(
 			GeoServiceImpl.class.getName() + ".zipCodeCityAndStates");
 
-		_dbValueIndexCity = Objects.requireNonNull(
-			configJsonObject.getInteger("dbValueIndexCity"));
-		_dbValueIndexState = Objects.requireNonNull(
-			configJsonObject.getInteger("dbValueIndexState"));
-		_dbValueIndexZipCode = Objects.requireNonNull(
-			configJsonObject.getInteger("dbValueIndexZipCode"));
+		_valueIndexCity = Objects.requireNonNull(
+			configJsonObject.getInteger("valueIndexCity"));
+		_valueIndexState = Objects.requireNonNull(
+			configJsonObject.getInteger("valueIndexState"));
+		_valueIndexZipCode = Objects.requireNonNull(
+			configJsonObject.getInteger("valueIndexZipCode"));
 	}
 
 	@Override
@@ -99,23 +99,8 @@ public class GeoServiceImpl
 	}
 
 	@Override
-	protected String getConfigKeyDelimiter() {
-		return "dbLineDelimiter";
-	}
-
-	@Override
-	protected String getConfigKeyUrl() {
-		return "dbUrl";
-	}
-
-	@Override
-	protected String getConfigKeyValueDelimiterPattern() {
-		return "dbValueDelimiterPattern";
-	}
-
-	@Override
 	protected void init(String[] values) {
-		String zipCode = StringUtils.unquote(values[_dbValueIndexZipCode]);
+		String zipCode = StringUtils.unquote(values[_valueIndexZipCode]);
 
 		Matcher matcher = _zipCodePattern.matcher(zipCode);
 
@@ -127,8 +112,8 @@ public class GeoServiceImpl
 			return;
 		}
 
-		String city = StringUtils.unquote(values[_dbValueIndexCity]);
-		String state = StringUtils.unquote(values[_dbValueIndexState]);
+		String city = StringUtils.unquote(values[_valueIndexCity]);
+		String state = StringUtils.unquote(values[_valueIndexState]);
 
 		CityAndState cityAndState = new CityAndState(city, state);
 
@@ -142,9 +127,9 @@ public class GeoServiceImpl
 	private static final Pattern _zipCodePattern = Pattern.compile("\\d{5}");
 
 	private final LocalMap<CityAndState, String> _cityAndStateZipCodesMap;
-	private final int _dbValueIndexCity;
-	private final int _dbValueIndexState;
-	private final int _dbValueIndexZipCode;
+	private final int _valueIndexCity;
+	private final int _valueIndexState;
+	private final int _valueIndexZipCode;
 	private final LocalMap<String, CityAndState> _zipCodeCityAndStatesMap;
 
 }
