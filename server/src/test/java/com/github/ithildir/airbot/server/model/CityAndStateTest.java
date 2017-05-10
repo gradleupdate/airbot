@@ -35,7 +35,6 @@ public class CityAndStateTest {
 		CityAndState cityAndState = new CityAndState("foo", "ca");
 
 		Assert.assertTrue(cityAndState.equals(cityAndState));
-		Assert.assertFalse(cityAndState.equals(null));
 
 		CityAndState cityAndState2 = new CityAndState("fOo", "cA");
 
