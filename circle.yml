@@ -1,3 +1,7 @@
+dependencies:
+  pre:
+    - sudo apt-get install jq
+    - wget -O ~/codacy-coverage-reporter.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 general:
   build_dir: server
 machine:
@@ -10,3 +14,5 @@ test:
     - ./gradlew jacocoTestReport
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - cp -r build/reports/jacoco/ $CIRCLE_ARTIFACTS
+    - test -z $CODACY_PROJECT_TOKEN || java -cp ~/codacy-coverage-reporter.jar com.codacy.CodacyCoverageReporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
