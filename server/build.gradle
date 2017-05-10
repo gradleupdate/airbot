@@ -58,6 +58,12 @@ generateServiceProxies {
 	source = sourceSets.main.java
 }
 
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+	}
+}
+
 repositories {
 	jcenter()
 }
