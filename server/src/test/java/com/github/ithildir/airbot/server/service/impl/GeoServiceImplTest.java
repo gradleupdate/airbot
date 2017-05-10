@@ -128,6 +128,21 @@ public class GeoServiceImplTest {
 	}
 
 	@Test
+	public void testHeaderSkipped(TestContext testContext) {
+		Async async = testContext.async();
+
+		_geoServiceImpl.getState(
+			"Zipcode",
+			asyncResult -> {
+				testContext.assertTrue(asyncResult.failed());
+
+				async.countDown();
+			});
+
+		async.awaitSuccess();
+	}
+
+	@Test
 	public void testInitSkip(TestContext testContext) {
 		Async async = testContext.async();
 
