@@ -55,6 +55,8 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			configJsonObject.getString(getConfigKeyDelimiter()));
 		_url = Objects.requireNonNull(
 			configJsonObject.getString(getConfigKeyUrl()));
+		_valueDelimiter = Objects.requireNonNull(
+			configJsonObject.getString(getConfigKeyValueDelimiterPattern()));
 
 		HttpClientOptions httpClientOptions = new HttpClientOptions(
 			configJsonObject);
@@ -125,7 +127,11 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 		return "url";
 	}
 
-	protected abstract void init(Buffer buffer);
+	protected String getConfigKeyValueDelimiterPattern() {
+		return "valueDelimiterPattern";
+	}
+
+	protected abstract void init(String[] values);
 
 	private Future<String> _getETag() {
 		Future<String> future = Future.future();
@@ -172,7 +178,7 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 				String eTag = httpClientResponse.getHeader(HttpHeaders.ETAG);
 
 				RecordParser recordParser = RecordParser.newDelimited(
-					_delimiter, this::init);
+					_delimiter, this::_init);
 
 				httpClientResponse.handler(recordParser::handle);
 
@@ -197,6 +203,14 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 		return future;
 	}
 
+	private void _init(Buffer buffer) {
+		String line = buffer.toString();
+
+		String[] values = line.split(_valueDelimiter);
+
+		init(values);
+	}
+
 	private static final Logger _logger = LoggerFactory.getLogger(
 		BaseRecordServiceImpl.class);
 
@@ -205,5 +219,6 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 	private final String _serviceName;
 	private final String _url;
 	private final LocalMap<String, String> _urlETags;
+	private final String _valueDelimiter;
 
 }

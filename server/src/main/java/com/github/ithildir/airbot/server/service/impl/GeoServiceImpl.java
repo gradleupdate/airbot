@@ -30,13 +30,13 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,8 +57,6 @@ public class GeoServiceImpl
 		_zipCodeCityAndStatesMap = sharedData.getLocalMap(
 			GeoServiceImpl.class.getName() + ".zipCodeCityAndStates");
 
-		_dbValueDelimiterPattern = Objects.requireNonNull(
-			configJsonObject.getString("dbValueDelimiterPattern"));
 		_dbValueIndexCity = Objects.requireNonNull(
 			configJsonObject.getInteger("dbValueIndexCity"));
 		_dbValueIndexState = Objects.requireNonNull(
@@ -111,18 +109,19 @@ public class GeoServiceImpl
 	}
 
 	@Override
-	protected void init(Buffer buffer) {
-		String line = buffer.toString();
+	protected String getConfigKeyValueDelimiterPattern() {
+		return "dbValueDelimiterPattern";
+	}
 
-		String[] values = line.split(_dbValueDelimiterPattern);
-
+	@Override
+	protected void init(String[] values) {
 		String zipCode = StringUtils.unquote(values[_dbValueIndexZipCode]);
 
 		Matcher matcher = _zipCodePattern.matcher(zipCode);
 
 		if (!matcher.matches()) {
 			if (_logger.isDebugEnabled()) {
-				_logger.debug("Ignoring line {0}", line);
+				_logger.debug("Ignoring {0}", Arrays.toString(values));
 			}
 
 			return;
@@ -143,7 +142,6 @@ public class GeoServiceImpl
 	private static final Pattern _zipCodePattern = Pattern.compile("\\d{5}");
 
 	private final LocalMap<CityAndState, String> _cityAndStateZipCodesMap;
-	private final String _dbValueDelimiterPattern;
 	private final int _dbValueIndexCity;
 	private final int _dbValueIndexState;
 	private final int _dbValueIndexZipCode;
