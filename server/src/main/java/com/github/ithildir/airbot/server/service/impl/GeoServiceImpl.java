@@ -38,8 +38,8 @@ import io.vertx.core.shareddata.SharedData;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.CharUtils;
 
 /**
  * @author Andrea Di Giorgi
@@ -102,9 +102,7 @@ public class GeoServiceImpl
 	protected void init(String[] values) {
 		String zipCode = StringUtils.unquote(values[_valueIndexZipCode]);
 
-		Matcher matcher = _zipCodePattern.matcher(zipCode);
-
-		if (!matcher.matches()) {
+		if (!CharUtils.isAsciiNumeric(zipCode.charAt(0))) {
 			if (_logger.isDebugEnabled()) {
 				_logger.debug("Ignoring {0}", Arrays.toString(values));
 			}
@@ -123,8 +121,6 @@ public class GeoServiceImpl
 
 	private static final Logger _logger = LoggerFactory.getLogger(
 		GeoServiceImpl.class);
-
-	private static final Pattern _zipCodePattern = Pattern.compile("\\d{5}");
 
 	private final LocalMap<CityAndState, String> _cityAndStateZipCodesMap;
 	private final int _valueIndexCity;
