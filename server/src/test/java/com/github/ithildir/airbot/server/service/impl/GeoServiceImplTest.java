@@ -62,17 +62,9 @@ public class GeoServiceImplTest {
 
 				Future<Void> future = Future.future();
 
-				JsonObject configJsonObject = new JsonObject();
-
-				configJsonObject.put("delimiter", System.lineSeparator());
-				configJsonObject.put(
-					"url",
+				JsonObject configJsonObject = _createConfigJsonObject(
 					"http://localhost:" + _httpServer.actualPort() + "/" +
 						_DB_FILE_NAME);
-				configJsonObject.put("valueDelimiterPattern", ",");
-				configJsonObject.put("valueIndexCity", 2);
-				configJsonObject.put("valueIndexState", 3);
-				configJsonObject.put("valueIndexZipCode", 0);
 
 				_geoServiceImpl = new GeoServiceImpl(_vertx, configJsonObject);
 
@@ -163,14 +155,8 @@ public class GeoServiceImplTest {
 			port = serverSocket.getLocalPort();
 		}
 
-		JsonObject configJsonObject = new JsonObject();
-
-		configJsonObject.put("delimiter", System.lineSeparator());
-		configJsonObject.put("url", "http://localhost:" + port);
-		configJsonObject.put("valueDelimiterPattern", ",");
-		configJsonObject.put("valueIndexCity", 2);
-		configJsonObject.put("valueIndexState", 3);
-		configJsonObject.put("valueIndexZipCode", 0);
+		JsonObject configJsonObject = _createConfigJsonObject(
+			"http://localhost:" + port);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
@@ -180,17 +166,9 @@ public class GeoServiceImplTest {
 
 	@Test
 	public void testInitWrongDbUrlMethod(TestContext testContext) {
-		JsonObject configJsonObject = new JsonObject();
-
-		configJsonObject.put("delimiter", System.lineSeparator());
-		configJsonObject.put(
-			"url",
+		JsonObject configJsonObject = _createConfigJsonObject(
 			"http://localhost:" + _httpServer.actualPort() + "/" +
 				_DB_FILE_NAME + "?erroredMethod=get");
-		configJsonObject.put("valueDelimiterPattern", ",");
-		configJsonObject.put("valueIndexCity", 2);
-		configJsonObject.put("valueIndexState", 3);
-		configJsonObject.put("valueIndexZipCode", 0);
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
@@ -200,20 +178,26 @@ public class GeoServiceImplTest {
 
 	@Test
 	public void testInitWrongDbUrlPath(TestContext testContext) {
-		JsonObject configJsonObject = new JsonObject();
-
-		configJsonObject.put("delimiter", System.lineSeparator());
-		configJsonObject.put(
-			"url", "http://localhost:" + _httpServer.actualPort() + "/foo");
-		configJsonObject.put("valueDelimiterPattern", ",");
-		configJsonObject.put("valueIndexCity", 2);
-		configJsonObject.put("valueIndexState", 3);
-		configJsonObject.put("valueIndexZipCode", 0);
+		JsonObject configJsonObject = _createConfigJsonObject(
+			"http://localhost:" + _httpServer.actualPort() + "/foo");
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
 
 		geoServiceImpl.init(testContext.asyncAssertFailure());
+	}
+
+	private static JsonObject _createConfigJsonObject(String url) {
+		JsonObject configJsonObject = new JsonObject();
+
+		configJsonObject.put("delimiter", System.lineSeparator());
+		configJsonObject.put("url", url);
+		configJsonObject.put("valueDelimiterPattern", ",");
+		configJsonObject.put("valueIndexCity", 2);
+		configJsonObject.put("valueIndexState", 3);
+		configJsonObject.put("valueIndexZipCode", 0);
+
+		return configJsonObject;
 	}
 
 	private static final String _DB_FILE_NAME =
