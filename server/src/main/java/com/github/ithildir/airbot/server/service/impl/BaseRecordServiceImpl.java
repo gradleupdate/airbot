@@ -52,11 +52,11 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 
 	public BaseRecordServiceImpl(Vertx vertx, JsonObject configJsonObject) {
 		_delimiter = Objects.requireNonNull(
-			configJsonObject.getString(getConfigKeyDelimiter()));
+			configJsonObject.getString(CONFIG_KEY_DELIMITER));
 		_url = Objects.requireNonNull(
-			configJsonObject.getString(getConfigKeyUrl()));
+			configJsonObject.getString(CONFIG_KEY_URL));
 		_valueDelimiter = Objects.requireNonNull(
-			configJsonObject.getString(getConfigKeyValueDelimiterPattern()));
+			configJsonObject.getString(CONFIG_KEY_VALUE_DELIMITER_PATTERN));
 
 		HttpClientOptions httpClientOptions = new HttpClientOptions(
 			configJsonObject);
@@ -119,19 +119,14 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			});
 	}
 
-	protected String getConfigKeyDelimiter() {
-		return "delimiter";
-	}
-
-	protected String getConfigKeyUrl() {
-		return "url";
-	}
-
-	protected String getConfigKeyValueDelimiterPattern() {
-		return "valueDelimiterPattern";
-	}
-
 	protected abstract void init(String[] values);
+
+	protected static final String CONFIG_KEY_DELIMITER = "delimiter";
+
+	protected static final String CONFIG_KEY_URL = "url";
+
+	protected static final String CONFIG_KEY_VALUE_DELIMITER_PATTERN =
+		"valueDelimiterPattern";
 
 	private Future<String> _getETag() {
 		Future<String> future = Future.future();

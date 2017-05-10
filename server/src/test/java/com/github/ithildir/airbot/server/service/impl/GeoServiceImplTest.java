@@ -22,24 +22,12 @@
 
 package com.github.ithildir.airbot.server.service.impl;
 
-import com.github.ithildir.airbot.server.test.util.TestUtil;
-
-import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 
-import java.io.IOException;
-
-import java.net.ServerSocket;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,45 +35,16 @@ import org.junit.runner.RunWith;
  * @author Andrea Di Giorgi
  */
 @RunWith(VertxUnitRunner.class)
-public class GeoServiceImplTest {
-
-	@BeforeClass
-	public static void setUpClass(TestContext testContext) {
-		_vertx = Vertx.vertx();
-
-		Future<HttpServer> httpServerFuture = TestUtil.serveFiles(
-			_vertx, _httpServerRequestsCounter, _FILE_NAME);
-
-		Future<Void> initFuture = httpServerFuture.compose(
-			httpServer -> {
-				_httpServer = httpServer;
-
-				Future<Void> future = Future.future();
-
-				JsonObject configJsonObject = _createConfigJsonObject(
-					"http://localhost:" + _httpServer.actualPort() + "/" +
-						_FILE_NAME);
-
-				_geoServiceImpl = new GeoServiceImpl(_vertx, configJsonObject);
-
-				_geoServiceImpl.init(future.completer());
-
-				return future;
-			});
-
-		initFuture.setHandler(testContext.asyncAssertSuccess());
-	}
-
-	@AfterClass
-	public static void tearDownClass(TestContext testContext) {
-		_httpServer.close(testContext.asyncAssertSuccess());
-	}
+public class GeoServiceImplTest
+	extends BaseRecordServiceImplTestCase<GeoServiceImpl> {
 
 	@Test
 	public void testGetState(TestContext testContext) {
 		Async async = testContext.async(2);
 
-		_geoServiceImpl.getState(
+		GeoServiceImpl geoServiceImpl = getRecordServiceImpl();
+
+		geoServiceImpl.getState(
 			"00705",
 			asyncResult -> {
 				testContext.assertEquals("PR", asyncResult.result());
@@ -93,7 +52,7 @@ public class GeoServiceImplTest {
 				async.countDown();
 			});
 
-		_geoServiceImpl.getState(
+		geoServiceImpl.getState(
 			"00000",
 			asyncResult -> {
 				testContext.assertTrue(asyncResult.failed());
@@ -108,7 +67,9 @@ public class GeoServiceImplTest {
 	public void testGetZipCode(TestContext testContext) {
 		Async async = testContext.async(2);
 
-		_geoServiceImpl.getZipCode(
+		GeoServiceImpl geoServiceImpl = getRecordServiceImpl();
+
+		geoServiceImpl.getZipCode(
 			"aibonito", "pr",
 			asyncResult -> {
 				testContext.assertEquals("00705", asyncResult.result());
@@ -116,7 +77,7 @@ public class GeoServiceImplTest {
 				async.countDown();
 			});
 
-		_geoServiceImpl.getZipCode(
+		geoServiceImpl.getZipCode(
 			"foo", "ca",
 			asyncResult -> {
 				testContext.assertTrue(asyncResult.failed());
@@ -131,7 +92,9 @@ public class GeoServiceImplTest {
 	public void testHeaderSkipped(TestContext testContext) {
 		Async async = testContext.async();
 
-		_geoServiceImpl.getState(
+		GeoServiceImpl geoServiceImpl = getRecordServiceImpl();
+
+		geoServiceImpl.getState(
 			"Zipcode",
 			asyncResult -> {
 				testContext.assertTrue(asyncResult.failed());
@@ -142,86 +105,29 @@ public class GeoServiceImplTest {
 		async.awaitSuccess();
 	}
 
-	@Test
-	public void testInitSkip(TestContext testContext) {
-		Async async = testContext.async();
+	protected JsonObject createConfigJsonObject(String url) {
+		JsonObject configJsonObject = super.createConfigJsonObject(url);
 
-		_httpServerRequestsCounter.set(0);
-
-		_geoServiceImpl.init(
-			asyncResult -> {
-				testContext.assertTrue(asyncResult.succeeded());
-
-				testContext.assertEquals(1, _httpServerRequestsCounter.get());
-
-				async.complete();
-			});
-
-		async.awaitSuccess();
-	}
-
-	@Test
-	public void testInitWrongDbUrlHost(TestContext testContext)
-		throws IOException {
-
-		int port = 0;
-
-		try (ServerSocket serverSocket = new ServerSocket(port)) {
-			port = serverSocket.getLocalPort();
-		}
-
-		JsonObject configJsonObject = _createConfigJsonObject(
-			"http://localhost:" + port);
-
-		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
-			_vertx, configJsonObject);
-
-		geoServiceImpl.init(testContext.asyncAssertFailure());
-	}
-
-	@Test
-	public void testInitWrongDbUrlMethod(TestContext testContext) {
-		JsonObject configJsonObject = _createConfigJsonObject(
-			"http://localhost:" + _httpServer.actualPort() + "/" + _FILE_NAME +
-				"?erroredMethod=get");
-
-		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
-			_vertx, configJsonObject);
-
-		geoServiceImpl.init(testContext.asyncAssertFailure());
-	}
-
-	@Test
-	public void testInitWrongDbUrlPath(TestContext testContext) {
-		JsonObject configJsonObject = _createConfigJsonObject(
-			"http://localhost:" + _httpServer.actualPort() + "/foo");
-
-		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
-			_vertx, configJsonObject);
-
-		geoServiceImpl.init(testContext.asyncAssertFailure());
-	}
-
-	private static JsonObject _createConfigJsonObject(String url) {
-		JsonObject configJsonObject = new JsonObject();
-
-		configJsonObject.put("delimiter", System.lineSeparator());
-		configJsonObject.put("url", url);
-		configJsonObject.put("valueDelimiterPattern", ",");
-		configJsonObject.put("valueIndexCity", 2);
-		configJsonObject.put("valueIndexState", 3);
-		configJsonObject.put("valueIndexZipCode", 0);
+		configJsonObject.put(
+			GeoServiceImpl.CONFIG_KEY_VALUE_DELIMITER_PATTERN, ",");
+		configJsonObject.put(GeoServiceImpl.CONFIG_KEY_VALUE_INDEX_CITY, 2);
+		configJsonObject.put(GeoServiceImpl.CONFIG_KEY_VALUE_INDEX_STATE, 3);
+		configJsonObject.put(GeoServiceImpl.CONFIG_KEY_VALUE_INDEX_ZIP_CODE, 0);
 
 		return configJsonObject;
 	}
 
-	private static final String _FILE_NAME =
-		"com/github/ithildir/airbot/server/service/impl/dependencies/geo.csv";
+	@Override
+	protected GeoServiceImpl createRecordServiceImpl(
+		Vertx vertx, JsonObject configJsonObject) {
 
-	private static GeoServiceImpl _geoServiceImpl;
-	private static HttpServer _httpServer;
-	private static final AtomicInteger _httpServerRequestsCounter =
-		new AtomicInteger();
-	private static Vertx _vertx;
+		return new GeoServiceImpl(vertx, configJsonObject);
+	}
+
+	@Override
+	protected String getFileName() {
+		return "com/github/ithildir/airbot/server/service/impl/dependencies" +
+			"/geo.csv";
+	}
 
 }

@@ -58,11 +58,11 @@ public class GeoServiceImpl
 			GeoServiceImpl.class.getName() + ".zipCodeCityAndStates");
 
 		_valueIndexCity = Objects.requireNonNull(
-			configJsonObject.getInteger("valueIndexCity"));
+			configJsonObject.getInteger(CONFIG_KEY_VALUE_INDEX_CITY));
 		_valueIndexState = Objects.requireNonNull(
-			configJsonObject.getInteger("valueIndexState"));
+			configJsonObject.getInteger(CONFIG_KEY_VALUE_INDEX_STATE));
 		_valueIndexZipCode = Objects.requireNonNull(
-			configJsonObject.getInteger("valueIndexZipCode"));
+			configJsonObject.getInteger(CONFIG_KEY_VALUE_INDEX_ZIP_CODE));
 	}
 
 	@Override
@@ -118,6 +118,15 @@ public class GeoServiceImpl
 		_cityAndStateZipCodesMap.put(cityAndState, zipCode);
 		_zipCodeCityAndStatesMap.put(zipCode, cityAndState);
 	}
+
+	protected static final String CONFIG_KEY_VALUE_INDEX_CITY =
+		"valueIndexCity";
+
+	protected static final String CONFIG_KEY_VALUE_INDEX_STATE =
+		"valueIndexState";
+
+	protected static final String CONFIG_KEY_VALUE_INDEX_ZIP_CODE =
+		"valueIndexZipCode";
 
 	private static final Logger _logger = LoggerFactory.getLogger(
 		GeoServiceImpl.class);
