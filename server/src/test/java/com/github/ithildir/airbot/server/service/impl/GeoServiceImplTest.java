@@ -54,7 +54,7 @@ public class GeoServiceImplTest {
 		_vertx = Vertx.vertx();
 
 		Future<HttpServer> httpServerFuture = TestUtil.serveFiles(
-			_vertx, _httpServerRequestsCounter, _DB_FILE_NAME);
+			_vertx, _httpServerRequestsCounter, _FILE_NAME);
 
 		Future<Void> initFuture = httpServerFuture.compose(
 			httpServer -> {
@@ -64,7 +64,7 @@ public class GeoServiceImplTest {
 
 				JsonObject configJsonObject = _createConfigJsonObject(
 					"http://localhost:" + _httpServer.actualPort() + "/" +
-						_DB_FILE_NAME);
+						_FILE_NAME);
 
 				_geoServiceImpl = new GeoServiceImpl(_vertx, configJsonObject);
 
@@ -182,8 +182,8 @@ public class GeoServiceImplTest {
 	@Test
 	public void testInitWrongDbUrlMethod(TestContext testContext) {
 		JsonObject configJsonObject = _createConfigJsonObject(
-			"http://localhost:" + _httpServer.actualPort() + "/" +
-				_DB_FILE_NAME + "?erroredMethod=get");
+			"http://localhost:" + _httpServer.actualPort() + "/" + _FILE_NAME +
+				"?erroredMethod=get");
 
 		GeoServiceImpl geoServiceImpl = new GeoServiceImpl(
 			_vertx, configJsonObject);
@@ -215,8 +215,8 @@ public class GeoServiceImplTest {
 		return configJsonObject;
 	}
 
-	private static final String _DB_FILE_NAME =
-		"com/github/ithildir/airbot/server/service/impl/dependencies/db.csv";
+	private static final String _FILE_NAME =
+		"com/github/ithildir/airbot/server/service/impl/dependencies/geo.csv";
 
 	private static GeoServiceImpl _geoServiceImpl;
 	private static HttpServer _httpServer;
