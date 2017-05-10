@@ -117,9 +117,13 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			});
 	}
 
-	protected abstract String getConfigKeyDelimiter();
+	protected String getConfigKeyDelimiter() {
+		return "delimiter";
+	}
 
-	protected abstract String getConfigKeyUrl();
+	protected String getConfigKeyUrl() {
+		return "url";
+	}
 
 	protected abstract void init(Buffer buffer);
 
