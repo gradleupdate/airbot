@@ -30,12 +30,9 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.lang3.CharUtils;
@@ -79,10 +76,6 @@ public class AreaServiceImpl
 		String zipCode = values[_valueIndexZipCode];
 
 		if (!CharUtils.isAsciiNumeric(zipCode.charAt(0))) {
-			if (_logger.isDebugEnabled()) {
-				_logger.debug("Ignoring {0}", Arrays.toString(values));
-			}
-
 			return;
 		}
 
@@ -96,9 +89,6 @@ public class AreaServiceImpl
 
 	protected static final String CONFIG_KEY_VALUE_INDEX_ZIP_CODE =
 		"valueIndexZipCode";
-
-	private static final Logger _logger = LoggerFactory.getLogger(
-		AreaServiceImpl.class);
 
 	private final int _valueIndexArea;
 	private final int _valueIndexZipCode;
