@@ -55,7 +55,7 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			configJsonObject.getString(CONFIG_KEY_DELIMITER));
 		_url = Objects.requireNonNull(
 			configJsonObject.getString(CONFIG_KEY_URL));
-		_valueDelimiter = Objects.requireNonNull(
+		_valueDelimiterPattern = Objects.requireNonNull(
 			configJsonObject.getString(CONFIG_KEY_VALUE_DELIMITER_PATTERN));
 
 		HttpClientOptions httpClientOptions = new HttpClientOptions(
@@ -201,7 +201,7 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 	private void _init(Buffer buffer) {
 		String line = buffer.toString();
 
-		String[] values = line.split(_valueDelimiter);
+		String[] values = line.split(_valueDelimiterPattern);
 
 		init(values);
 	}
@@ -214,6 +214,6 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 	private final String _serviceName;
 	private final String _url;
 	private final LocalMap<String, String> _urlETags;
-	private final String _valueDelimiter;
+	private final String _valueDelimiterPattern;
 
 }
