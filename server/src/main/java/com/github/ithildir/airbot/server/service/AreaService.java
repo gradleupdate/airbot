@@ -22,12 +22,14 @@
 
 package com.github.ithildir.airbot.server.service;
 
+import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
  * @author Andrea Di Giorgi
  */
+@ProxyGen
 public interface AreaService extends RecordService {
 
 	public void getArea(String zipCode, Handler<AsyncResult<String>> handler);

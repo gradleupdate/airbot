@@ -22,6 +22,7 @@
 
 package com.github.ithildir.airbot.server.service;
 
+import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -30,6 +31,7 @@ import io.vertx.serviceproxy.ProxyHelper;
 /**
  * @author Andrea Di Giorgi
  */
+@ProxyGen
 public interface GeoService extends RecordService {
 
 	public static final String ADDRESS = GeoService.class.getName();
