@@ -59,6 +59,12 @@ generateServiceProxies {
 }
 
 jacocoTestReport {
+	doFirst {
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, excludes: ["**/*VertxEBProxy*", "**/*VertxProxyHandler*"])
+		})
+	}
+
 	reports {
 		xml.enabled = true
 	}
