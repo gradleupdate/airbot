@@ -104,7 +104,7 @@ public class AreaServiceImplTest
 	@Override
 	protected String getFileName() {
 		return "com/github/ithildir/airbot/server/service/impl/dependencies" +
-			"/area.csv";
+			"/area.dat";
 	}
 
 }
