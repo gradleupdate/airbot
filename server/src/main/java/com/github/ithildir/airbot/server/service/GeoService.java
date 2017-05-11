@@ -32,7 +32,7 @@ import io.vertx.serviceproxy.ProxyHelper;
  * @author Andrea Di Giorgi
  */
 @ProxyGen
-public interface GeoService extends RecordService {
+public interface GeoService {
 
 	public static final String ADDRESS = GeoService.class.getName();
 
@@ -44,5 +44,7 @@ public interface GeoService extends RecordService {
 
 	public void getZipCode(
 		String city, String region, Handler<AsyncResult<String>> handler);
+
+	public void init(Handler<AsyncResult<Void>> handler);
 
 }

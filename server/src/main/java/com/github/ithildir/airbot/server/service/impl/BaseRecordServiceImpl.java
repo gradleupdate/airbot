@@ -22,7 +22,6 @@
 
 package com.github.ithildir.airbot.server.service.impl;
 
-import com.github.ithildir.airbot.server.service.RecordService;
 import com.github.ithildir.airbot.server.util.StringUtils;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -48,7 +47,7 @@ import java.util.Objects;
 /**
  * @author Andrea Di Giorgi
  */
-public abstract class BaseRecordServiceImpl implements RecordService {
+public abstract class BaseRecordServiceImpl {
 
 	public BaseRecordServiceImpl(Vertx vertx, JsonObject configJsonObject) {
 		_delimiter = Objects.requireNonNull(
@@ -73,7 +72,6 @@ public abstract class BaseRecordServiceImpl implements RecordService {
 			BaseRecordServiceImpl.class.getName() + ".eTags");
 	}
 
-	@Override
 	public void init(Handler<AsyncResult<Void>> handler) {
 		Future<String> eTagFuture = _getETag();
 
