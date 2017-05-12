@@ -20,10 +20,7 @@
  * SOFTWARE.
  */
 
-@ModuleGen(
-	groupPackage = "com.github.ithildir.airbot.server.service",
-	name = "airbot-server-service"
-)
+@ModuleGen(groupPackage = "com.github.ithildir", name = "airbot-server")
 package com.github.ithildir.airbot.server.service;
 
 import io.vertx.codegen.annotations.ModuleGen;
