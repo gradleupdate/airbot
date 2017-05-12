@@ -30,7 +30,6 @@ clean {
 
 compileJava {
 	dependsOn generateServiceProxies
-
 	source generatedSrcDir
 }
 
