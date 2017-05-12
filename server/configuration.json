@@ -13,5 +13,9 @@
 		"valueIndexCity": 2,
 		"valueIndexState": 3,
 		"valueIndexZipCode": 0
+	},
+	"report": {
+		"url": "https://files.airnowtech.org/airnow/today/reportingarea.dat",
+		"valueDelimiterPattern": "\\|"
 	}
 }
