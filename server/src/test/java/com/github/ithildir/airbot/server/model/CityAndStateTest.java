@@ -34,16 +34,11 @@ public class CityAndStateTest {
 	public void testEquals() {
 		CityAndState cityAndState = new CityAndState("foo", "ca");
 
-		Assert.assertFalse(cityAndState.equals(new Object()));
 		Assert.assertTrue(cityAndState.equals(cityAndState));
-
-		CityAndState cityAndState2 = new CityAndState("fOo", "cA");
-
-		Assert.assertTrue(cityAndState.equals(cityAndState2));
-
-		cityAndState2 = new CityAndState("bar baz", "wa");
-
-		Assert.assertFalse(cityAndState.equals(cityAndState2));
+		Assert.assertTrue(cityAndState.equals(new CityAndState("fOo", "cA")));
+		Assert.assertFalse(cityAndState.equals(new Object()));
+		Assert.assertFalse(
+			cityAndState.equals(new CityAndState("bar baz", "wa")));
 	}
 
 	@Test
