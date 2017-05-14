@@ -72,7 +72,7 @@ public class AreaServiceImpl
 	}
 
 	@Override
-	protected void init(String[] values) {
+	protected void init(String[] values) throws Exception {
 		String zipCode = values[_valueIndexZipCode];
 
 		if (!CharUtils.isAsciiNumeric(zipCode.charAt(0))) {

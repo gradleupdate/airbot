@@ -117,7 +117,7 @@ public abstract class BaseRecordServiceImpl {
 			});
 	}
 
-	protected abstract void init(String[] values);
+	protected abstract void init(String[] values) throws Exception;
 
 	protected static final String CONFIG_KEY_DELIMITER = "delimiter";
 
@@ -201,7 +201,12 @@ public abstract class BaseRecordServiceImpl {
 
 		String[] values = line.split(_valueDelimiterPattern);
 
-		init(values);
+		try {
+			init(values);
+		}
+		catch (Exception e) {
+			_logger.error("Unable to parse line: {0}", line);
+		}
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(
