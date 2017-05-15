@@ -1,5 +1,6 @@
 {
 	"area": {
+		"delay": 86400000,
 		"delimiter": "\n",
 		"url": "https://files.airnowtech.org/airnow/yesterday/cityzipcodes.csv",
 		"valueDelimiterPattern": "\\|",
@@ -7,6 +8,7 @@
 		"valueIndexZipCode": 2
 	},
 	"geo": {
+		"delay": 86400000,
 		"delimiter": "\r\n",
 		"url": "http://federalgovernmentzipcodes.us/free-zipcode-database-Primary.csv",
 		"valueDelimiterPattern": ",",
@@ -15,6 +17,7 @@
 		"valueIndexZipCode": 0
 	},
 	"report": {
+		"delay": 7200000,
 		"url": "https://files.airnowtech.org/airnow/today/reportingarea.dat",
 		"valueDelimiterPattern": "\\|"
 	}
