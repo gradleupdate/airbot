@@ -32,6 +32,8 @@ import io.vertx.core.Handler;
 @ProxyGen
 public interface GeoService extends RecordService {
 
+	public static final String ADDRESS = GeoService.class.getName();
+
 	public void getState(String zipCode, Handler<AsyncResult<String>> handler);
 
 	public void getZipCode(

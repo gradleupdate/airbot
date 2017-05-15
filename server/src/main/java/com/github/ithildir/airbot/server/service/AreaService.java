@@ -32,6 +32,8 @@ import io.vertx.core.Handler;
 @ProxyGen
 public interface AreaService extends RecordService {
 
+	public static final String ADDRESS = AreaService.class.getName();
+
 	public void getArea(String zipCode, Handler<AsyncResult<String>> handler);
 
 }

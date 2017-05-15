@@ -33,6 +33,8 @@ import io.vertx.core.json.JsonObject;
 @ProxyGen
 public interface ReportService extends RecordService {
 
+	public static final String ADDRESS = ReportService.class.getName();
+
 	public void getForecastReport(
 		String area, int offsetDays, Handler<AsyncResult<JsonObject>> handler);
 
