@@ -18,6 +18,7 @@
 	},
 	"report": {
 		"delay": 7200000,
+		"delimiter": "\n",
 		"url": "https://files.airnowtech.org/airnow/today/reportingarea.dat",
 		"valueDelimiterPattern": "\\|"
 	}
