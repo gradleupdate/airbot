@@ -21,10 +21,11 @@ check {
 }
 
 dependencies {
-	compile classifier: "processor", group: "io.vertx", name: "vertx-service-proxy", version: "3.4.1"
 	compile group: "io.vertx", name: "vertx-core", version: "3.4.1"
+	compile group: "io.vertx", name: "vertx-service-proxy", version: "3.4.1"
 	compile group: "org.apache.commons", name: "commons-lang3", version: "3.5"
 
+	compileOnly classifier: "processor", group: "io.vertx", name: "vertx-service-proxy", version: "3.4.1"
 	compileOnly group: "io.vertx", name: "vertx-codegen", version: "3.4.1"
 
 	testCompile group: "io.vertx", name: "vertx-unit", version: "3.4.1"
