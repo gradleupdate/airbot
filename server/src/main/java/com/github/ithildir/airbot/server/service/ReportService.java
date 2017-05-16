@@ -31,14 +31,12 @@ import io.vertx.core.json.JsonObject;
  * @author Andrea Di Giorgi
  */
 @ProxyGen
-public interface ReportService {
+public interface ReportService extends RecordService {
 
 	public void getForecastReport(
 		String area, int offsetDays, Handler<AsyncResult<JsonObject>> handler);
 
 	public void getObservationReport(
 		String area, Handler<AsyncResult<JsonObject>> handler);
-
-	public void init(Handler<AsyncResult<Void>> handler);
 
 }

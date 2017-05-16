@@ -22,19 +22,16 @@
 
 package com.github.ithildir.airbot.server.service;
 
-import io.vertx.codegen.annotations.ProxyGen;
+import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
  * @author Andrea Di Giorgi
  */
-@ProxyGen
-public interface GeoService extends RecordService {
+@VertxGen(concrete = false)
+public interface RecordService {
 
-	public void getState(String zipCode, Handler<AsyncResult<String>> handler);
-
-	public void getZipCode(
-		String city, String region, Handler<AsyncResult<String>> handler);
+	public void init(Handler<AsyncResult<Void>> handler);
 
 }

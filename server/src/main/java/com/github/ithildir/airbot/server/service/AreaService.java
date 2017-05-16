@@ -30,10 +30,8 @@ import io.vertx.core.Handler;
  * @author Andrea Di Giorgi
  */
 @ProxyGen
-public interface AreaService {
+public interface AreaService extends RecordService {
 
 	public void getArea(String zipCode, Handler<AsyncResult<String>> handler);
-
-	public void init(Handler<AsyncResult<Void>> handler);
 
 }
