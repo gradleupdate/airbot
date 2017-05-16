@@ -34,7 +34,6 @@ import java.text.ParseException;
 
 import java.util.Date;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -119,22 +118,33 @@ public class AirNowReportServiceImplTest
 	}
 
 	@Test
-	public void testGetValidDate() throws ParseException {
-		_testGetValidDate(1494633600000L, "05/13/17", null, "GMT");
-		_testGetValidDate(1494658800000L, "05/13/17", null, "PDT");
-		_testGetValidDate(1494633600000L, "05/13/17", "", "GMT");
-		_testGetValidDate(1494658800000L, "05/13/17", "", "PDT");
-		_testGetValidDate(1494644760000L, "05/13/17", "3:06", "GMT");
-		_testGetValidDate(1494669960000L, "05/13/17", "3:06", "PDT");
-		_testGetValidDate(1494644760000L, "05/13/17", "03:06", "GMT");
-		_testGetValidDate(1494669960000L, "05/13/17", "03:06", "PDT");
-		_testGetValidDate(1494711900000L, "05/13/17", "21:45", "GMT");
-		_testGetValidDate(1494737100000L, "05/13/17", "21:45", "PDT");
+	public void testGetValidDate(TestContext testContext)
+		throws ParseException {
+
+		_testGetValidDate(testContext, 1494633600000L, "05/13/17", null, "GMT");
+		_testGetValidDate(testContext, 1494658800000L, "05/13/17", null, "PDT");
+		_testGetValidDate(testContext, 1494633600000L, "05/13/17", "", "GMT");
+		_testGetValidDate(testContext, 1494658800000L, "05/13/17", "", "PDT");
+		_testGetValidDate(
+			testContext, 1494644760000L, "05/13/17", "3:06", "GMT");
+		_testGetValidDate(
+			testContext, 1494669960000L, "05/13/17", "3:06", "PDT");
+		_testGetValidDate(
+			testContext, 1494644760000L, "05/13/17", "03:06", "GMT");
+		_testGetValidDate(
+			testContext, 1494669960000L, "05/13/17", "03:06", "PDT");
+		_testGetValidDate(
+			testContext, 1494711900000L, "05/13/17", "21:45", "GMT");
+		_testGetValidDate(
+			testContext, 1494737100000L, "05/13/17", "21:45", "PDT");
 	}
 
 	@Test(expected = ParseException.class)
-	public void testGetValidDateError() throws ParseException {
-		_testGetValidDate(1494737100000L, "05/13/17", "21:4x", "PDT");
+	public void testGetValidDateError(TestContext testContext)
+		throws ParseException {
+
+		_testGetValidDate(
+			testContext, 1494737100000L, "05/13/17", "21:4x", "PDT");
 	}
 
 	@Override
@@ -161,14 +171,14 @@ public class AirNowReportServiceImplTest
 	}
 
 	private void _testGetValidDate(
-			long expectedTime, String dateString, String timeString,
-			String timeZoneId)
+			TestContext testContext, long expectedTime, String dateString,
+			String timeString, String timeZoneId)
 		throws ParseException {
 
 		Date date = AirNowReportServiceImpl.getValidDate(
 			dateString, timeString, timeZoneId);
 
-		Assert.assertEquals(expectedTime, date.getTime());
+		testContext.assertEquals(expectedTime, date.getTime());
 	}
 
 }
