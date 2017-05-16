@@ -32,10 +32,11 @@ import java.util.Date;
 public class Report implements Shareable {
 
 	public Report(
-		int aqi, String mainPollutant, Date validDate, String timeZoneId,
-		boolean actionDay, String discussion) {
+		int aqi, String aqiCategory, String mainPollutant, Date validDate,
+		String timeZoneId, boolean actionDay, String discussion) {
 
 		_aqi = aqi;
+		_aqiCategory = aqiCategory;
 		_mainPollutant = mainPollutant;
 		_validDate = validDate;
 		_timeZoneId = timeZoneId;
@@ -45,6 +46,10 @@ public class Report implements Shareable {
 
 	public int getAQI() {
 		return _aqi;
+	}
+
+	public String getAQICategory() {
+		return _aqiCategory;
 	}
 
 	public String getDiscussion() {
@@ -69,6 +74,7 @@ public class Report implements Shareable {
 
 	private final boolean _actionDay;
 	private final int _aqi;
+	private final String _aqiCategory;
 	private final String _discussion;
 	private final String _mainPollutant;
 	private final String _timeZoneId;

@@ -149,16 +149,24 @@ public class AirNowReportServiceImpl
 		String validDateString = values[1];
 		String validTimeString = values[2];
 		String timeZoneId = values[3];
-		int aqi = Integer.parseInt(values[12]);
+		String aqiString = values[12];
+		String aqiCategory = values[13];
 		String mainPollutant = values[11];
 		boolean actionDay = BooleanUtils.toBoolean(values[14]);
 		String discussion = values[15];
+
+		int aqi = -1;
+
+		if (StringUtils.isNotBlank(aqiString)) {
+			aqi = Integer.parseInt(aqiString);
+		}
 
 		Date validDate = getValidDate(
 			validDateString, validTimeString, timeZoneId);
 
 		Report report = new Report(
-			aqi, mainPollutant, validDate, timeZoneId, actionDay, discussion);
+			aqi, aqiCategory, mainPollutant, validDate, timeZoneId, actionDay,
+			discussion);
 
 		if (dataType == 'F') {
 			int offsetDays = Integer.parseInt(values[4]);
