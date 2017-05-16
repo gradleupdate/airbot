@@ -34,6 +34,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -141,7 +142,7 @@ public abstract class BaseRecordServiceImpl {
 					return;
 				}
 
-				String eTag = httpClientResponse.getHeader(HttpHeaders.ETAG);
+				String eTag = _getETag(httpClientResponse);
 
 				future.complete(eTag);
 			});
@@ -151,6 +152,11 @@ public abstract class BaseRecordServiceImpl {
 		httpClientRequest.end();
 
 		return future;
+	}
+
+	private String _getETag(HttpClientResponse httpClientResponse) {
+		return StringUtils.unquote(
+			httpClientResponse.getHeader(HttpHeaders.ETAG));
 	}
 
 	private Future<String> _init() {
@@ -168,7 +174,7 @@ public abstract class BaseRecordServiceImpl {
 					return;
 				}
 
-				String eTag = httpClientResponse.getHeader(HttpHeaders.ETAG);
+				String eTag = _getETag(httpClientResponse);
 
 				RecordParser recordParser = RecordParser.newDelimited(
 					_delimiter, this::_init);
