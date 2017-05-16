@@ -43,6 +43,10 @@ jacocoTestReport {
 	}
 }
 
+jar {
+	exclude "**/*.java"
+}
+
 repositories {
 	jcenter()
 }
