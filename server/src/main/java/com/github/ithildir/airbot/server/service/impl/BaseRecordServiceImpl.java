@@ -64,7 +64,7 @@ public abstract class BaseRecordServiceImpl {
 
 		Class<?> clazz = getClass();
 
-		_serviceName = clazz.getName();
+		_serviceName = clazz.getSimpleName();
 
 		SharedData sharedData = vertx.sharedData();
 
@@ -205,7 +205,8 @@ public abstract class BaseRecordServiceImpl {
 			init(values);
 		}
 		catch (Exception e) {
-			_logger.error("Unable to parse line: {0}", line);
+			_logger.error(
+				"Unable to parse {0} line: {1}", e, _serviceName, line);
 		}
 	}
 
