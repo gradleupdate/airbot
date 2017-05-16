@@ -105,6 +105,7 @@ public class GeoServiceImplTest
 		async.awaitSuccess();
 	}
 
+	@Override
 	protected JsonObject createConfigJsonObject(String url) {
 		JsonObject configJsonObject = super.createConfigJsonObject(url);
 
