@@ -47,6 +47,8 @@ public class AreaServiceImplTest
 		areaServiceImpl.getArea(
 			"12845",
 			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
 				testContext.assertEquals(
 					"Adirondacks Region", asyncResult.result());
 

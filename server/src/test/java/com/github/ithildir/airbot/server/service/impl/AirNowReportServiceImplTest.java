@@ -54,6 +54,8 @@ public class AirNowReportServiceImplTest
 		airNowReportServiceImpl.getForecastReport(
 			"Baton Rouge Area", 1,
 			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
 				JsonObject jsonObject = asyncResult.result();
 
 				testContext.assertTrue(jsonObject.getBoolean("actionDay"));
@@ -90,6 +92,8 @@ public class AirNowReportServiceImplTest
 		airNowReportServiceImpl.getObservationReport(
 			"Albuquerque",
 			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
 				JsonObject jsonObject = asyncResult.result();
 
 				testContext.assertFalse(jsonObject.getBoolean("actionDay"));

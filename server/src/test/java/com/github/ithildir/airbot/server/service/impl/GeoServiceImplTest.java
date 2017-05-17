@@ -47,6 +47,8 @@ public class GeoServiceImplTest
 		geoServiceImpl.getState(
 			"00705",
 			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
 				testContext.assertEquals("PR", asyncResult.result());
 
 				async.countDown();
@@ -72,6 +74,8 @@ public class GeoServiceImplTest
 		geoServiceImpl.getZipCode(
 			"aibonito", "pr",
 			asyncResult -> {
+				testContext.assertTrue(asyncResult.succeeded());
+
 				testContext.assertEquals("00705", asyncResult.result());
 
 				async.countDown();
