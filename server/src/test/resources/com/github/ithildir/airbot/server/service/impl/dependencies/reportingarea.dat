@@ -3,7 +3,7 @@
 05/14/17|05/13/17||EAT|-1|Y|Y|Addis Ababa Central|  |9.0585|38.7616|PM2.5|78|Moderate|No||U.S. Department of State Ethiopia - Addis Ababa
 05/14/17|05/13/17||EDT|-1|Y|Y|Adirondacks Region|NY|43.9700|-74.1600|OZONE|44|Good|No||New York Dept. of Environmental Conservation
 05/14/17|05/13/17||EDT|-1|Y|N|Adirondacks Region|NY|43.9700|-74.1600|PM2.5|16|Good|No||New York Dept. of Environmental Conservation
-05/14/17|05/14/17|12:00|EDT|0|O|Y|Adirondacks Region|NY|43.9700|-74.1600|OZONE|36|Good|No||New York Dept. of Environmental Conservation
+05/14/17|05/14/17|12:00|EDT|0|O|Y|Adirondacks Region|NY|43.9700|-74.1600|OZONE|FOO|Good|No||New York Dept. of Environmental Conservation
 05/14/17|05/14/17|12:00|EDT|0|O|N|Adirondacks Region|NY|43.9700|-74.1600|PM2.5|8|Good|No||New York Dept. of Environmental Conservation
 05/12/17|05/14/17||EDT|2|F|Y|Adirondacks Region|NY|43.9700|-74.1600|OZONE|40|Good|No||New York Dept. of Environmental Conservation
 05/12/17|05/14/17||EDT|2|F|N|Adirondacks Region|NY|43.9700|-74.1600|PM2.5|13|Good|No||New York Dept. of Environmental Conservation
