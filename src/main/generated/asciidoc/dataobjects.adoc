@@ -1,0 +1,35 @@
+= Cheatsheets
+
+[[Coordinates]]
+== Coordinates
+
+++++
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[latitude]]`latitude`|`Number (double)`|-
+|[[longitude]]`longitude`|`Number (double)`|-
+|===
+
+[[Measurement]]
+== Measurement
+
+++++
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[aqi]]`aqi`|`Number (int)`|-
+|[[city]]`city`|`String`|-
+|[[mainPollutant]]`mainPollutant`|`String`|-
+|[[time]]`time`|`Number (long)`|-
+|[[values]]`values`|`Number (Double)`|-
+|===
+

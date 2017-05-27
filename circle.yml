@@ -2,8 +2,6 @@ dependencies:
   pre:
     - sudo apt-get install jq
     - wget -O ~/codacy-coverage-reporter.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
-general:
-  build_dir: server
 machine:
   java:
     version: openjdk8
