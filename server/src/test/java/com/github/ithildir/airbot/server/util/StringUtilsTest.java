@@ -22,24 +22,28 @@
 
 package com.github.ithildir.airbot.server.util;
 
-import org.junit.Assert;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author Andrea Di Giorgi
  */
+@RunWith(VertxUnitRunner.class)
 public class StringUtilsTest {
 
 	@Test
-	public void testUnquote() {
-		Assert.assertNull(StringUtils.unquote(null));
-		Assert.assertEquals("", StringUtils.unquote(""));
-		Assert.assertEquals("", StringUtils.unquote("''"));
-		Assert.assertEquals("", StringUtils.unquote("\"\""));
-		Assert.assertEquals("'foo", StringUtils.unquote("'foo"));
-		Assert.assertEquals("\"foo", StringUtils.unquote("\"foo"));
-		Assert.assertEquals("foo", StringUtils.unquote("'foo'"));
-		Assert.assertEquals("foo", StringUtils.unquote("\"foo\""));
+	public void testUnquote(TestContext testContext) {
+		testContext.assertNull(StringUtils.unquote(null));
+		testContext.assertEquals("", StringUtils.unquote(""));
+		testContext.assertEquals("", StringUtils.unquote("''"));
+		testContext.assertEquals("", StringUtils.unquote("\"\""));
+		testContext.assertEquals("'foo", StringUtils.unquote("'foo"));
+		testContext.assertEquals("\"foo", StringUtils.unquote("\"foo"));
+		testContext.assertEquals("foo", StringUtils.unquote("'foo'"));
+		testContext.assertEquals("foo", StringUtils.unquote("\"foo\""));
 	}
 
 }
