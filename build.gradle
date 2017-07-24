@@ -1,5 +1,6 @@
 buildscript {
 	dependencies {
+		classpath group: "com.github.jengelman.gradle.plugins", name: "shadow", version: "latest.release"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 	}
 
@@ -9,6 +10,7 @@ buildscript {
 }
 
 apply plugin: "application"
+apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "com.liferay.source.formatter"
 apply plugin: "jacoco"
 
@@ -31,14 +33,14 @@ compileJava {
 dependencies {
 	compile group: "ai.api", name: "libai", version: "1.4.8"
 	compile group: "com.github.ThangLeQuoc", name: "aqi-calculator", version: "master-SNAPSHOT"
-	compile group: "io.vertx", name: "vertx-config", version: "3.4.2"
-	compile group: "io.vertx", name: "vertx-core", version: "3.4.2"
-	compile group: "io.vertx", name: "vertx-service-proxy", version: "3.4.2"
-	compile group: "io.vertx", name: "vertx-web", version: "3.4.2"
-	compile group: "io.vertx", name: "vertx-web-client", version: "3.4.2"
 	compile group: "org.ocpsoft.prettytime", name: "prettytime", version: "4.0.1.Final"
 
 	compileOnly group: "io.vertx", name: "vertx-codegen", version: "3.4.2"
+	compileOnly group: "io.vertx", name: "vertx-config", version: "3.4.2"
+	compileOnly group: "io.vertx", name: "vertx-core", version: "3.4.2"
+	compileOnly group: "io.vertx", name: "vertx-service-proxy", version: "3.4.2"
+	compileOnly group: "io.vertx", name: "vertx-web", version: "3.4.2"
+	compileOnly group: "io.vertx", name: "vertx-web-client", version: "3.4.2"
 
 	testCompile group: "io.vertx", name: "vertx-unit", version: "3.4.2"
 	testCompile group: "junit", name: "junit", version: "4.12"
