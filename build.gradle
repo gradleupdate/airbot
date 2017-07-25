@@ -18,7 +18,7 @@ group = "com.github.ithildir"
 mainClassName = "io.vertx.core.Launcher"
 sourceCompatibility = 1.8
 
-File generatedSrcDir = file("src/main/generated")
+def generatedSrcDir = file("src/main/generated")
 
 check {
 	dependsOn checkSourceFormatting
