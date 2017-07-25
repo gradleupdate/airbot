@@ -22,28 +22,12 @@
 
 package com.github.ithildir.airbot.util;
 
-import com.thanglequoc.aqicalculator.AQICalculator;
-import com.thanglequoc.aqicalculator.PollutantCode;
-
 import java.util.Locale;
 
 /**
  * @author Andrea Di Giorgi
  */
 public class AirBotUtil {
-
-	public static int getAQI(String pollutant, double value) {
-		PollutantCode pollutantCode = _getPollutantCode(pollutant);
-
-		if (pollutantCode == null) {
-			return -1;
-		}
-
-		AQICalculator aqiCalculator = AQICalculator.getAQICalculatorInstance();
-
-		return aqiCalculator.getAQIforPollutant(
-			pollutantCode.getLiteral(), value);
-	}
 
 	public static String getAQILevel(int aqi, Locale locale) {
 		String key = "good";
@@ -65,29 +49,6 @@ public class AirBotUtil {
 		}
 
 		return LanguageUtil.get(locale, key);
-	}
-
-	private static PollutantCode _getPollutantCode(String pollutant) {
-		if (pollutant.equals("co")) {
-			return PollutantCode.CO;
-		}
-		else if (pollutant.equals("no2")) {
-			return PollutantCode.NO2;
-		}
-		else if (pollutant.equals("o3")) {
-			return PollutantCode.O3;
-		}
-		else if (pollutant.equals("pm10")) {
-			return PollutantCode.PM10;
-		}
-		else if (pollutant.equals("pm25")) {
-			return PollutantCode.PM25;
-		}
-		else if (pollutant.equals("so2")) {
-			return PollutantCode.SO2;
-		}
-
-		return null;
 	}
 
 }
