@@ -29,7 +29,7 @@ compileJava {
 }
 
 dependencies {
-	compile group: "ai.api", name: "libai", version: "1.4.8"
+	compile group: "ai.api", name: "libai", version: "1.5.10"
 	compile group: "io.vertx", name: "vertx-config", version: "3.4.2"
 	compile group: "io.vertx", name: "vertx-core", version: "3.4.2"
 	compile group: "io.vertx", name: "vertx-service-proxy", version: "3.4.2"
