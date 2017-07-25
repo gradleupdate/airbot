@@ -23,6 +23,7 @@
 package com.github.ithildir.airbot;
 
 import com.github.ithildir.airbot.constants.ConfigKeys;
+import com.github.ithildir.airbot.server.SingleUserAuthProvider;
 import com.github.ithildir.airbot.server.api.ai.ApiAiHandler;
 import com.github.ithildir.airbot.server.api.ai.GetAirQualityApiAiFulfillmentBuilder;
 import com.github.ithildir.airbot.service.GeoService;
@@ -36,8 +37,10 @@ import io.vertx.core.Verticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.BodyHandler;
 
 /**
@@ -103,9 +106,19 @@ public class AirBotVerticle extends AbstractVerticle {
 
 		Router router = Router.router(vertx);
 
-		Route route = router.route();
+		Route authHandlerRoute = router.route();
 
-		route.handler(BodyHandler.create());
+		String username = configJsonObject.getString(ConfigKeys.USERNAME);
+		String password = configJsonObject.getString(ConfigKeys.PASSWORD);
+
+		AuthProvider authProvider = new SingleUserAuthProvider(
+			username, password);
+
+		authHandlerRoute.handler(BasicAuthHandler.create(authProvider));
+
+		Route bodyHandlerRoute = router.route();
+
+		bodyHandlerRoute.handler(BodyHandler.create());
 
 		_addHttpRouteApiAi(router);
 

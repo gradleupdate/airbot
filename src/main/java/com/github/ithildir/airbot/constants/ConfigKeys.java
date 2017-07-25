@@ -31,7 +31,11 @@ public class ConfigKeys {
 
 	public static final String MAPQUEST_OPEN = "mapquest_open";
 
+	public static final String PASSWORD = "password";
+
 	public static final String PORT = "port";
+
+	public static final String USERNAME = "username";
 
 	public static final String WAQI_KEY = "waqi_key";
 
