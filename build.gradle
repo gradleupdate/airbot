@@ -65,6 +65,18 @@ repositories {
 
 run {
 	args "run", "com.github.ithildir.airbot.AirBotVerticle"
+
+	doFirst {
+		def airbotEnvironment = [:]
+
+		environment.each {
+			if (it.key.startsWith("airbot_")) {
+				airbotEnvironment[it.key.substring(7)] = it.value
+			}
+		}
+
+		environment << airbotEnvironment
+	}
 }
 
 runVertxCodeGen {
