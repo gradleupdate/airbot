@@ -20,43 +20,53 @@
  * SOFTWARE.
  */
 
-package com.github.ithildir.airbot.service;
+package com.github.ithildir.airbot.util;
 
-import com.github.ithildir.airbot.model.Measurement;
-
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.serviceproxy.ProxyHelper;
-
-import org.apache.commons.lang3.StringUtils;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.parsetools.RecordParser;
+import io.vertx.core.streams.WriteStream;
 
 /**
  * @author Andrea Di Giorgi
  */
-@ProxyGen
-public interface MeasurementService {
+public class RecordParserWriteStream implements WriteStream<Buffer> {
 
-	public static String getAddress(String country) {
-		String address = MeasurementService.class.getName();
-
-		if (StringUtils.isNotBlank(country)) {
-			address += "." + country;
-		}
-
-		return address;
+	public RecordParserWriteStream(RecordParser recordParser) {
+		_recordParser = recordParser;
 	}
 
-	public static MeasurementService getInstance(Vertx vertx, String country) {
-		return ProxyHelper.createProxy(
-			MeasurementService.class, vertx, getAddress(country));
+	@Override
+	public WriteStream<Buffer> drainHandler(Handler<Void> handler) {
+		return this;
 	}
 
-	public void getMeasurement(
-		double latitude, double longitude,
-		Handler<AsyncResult<Measurement>> handler);
+	@Override
+	public void end() {
+	}
 
-	public void init(Handler<AsyncResult<Void>> handler);
+	@Override
+	public WriteStream<Buffer> exceptionHandler(Handler<Throwable> handler) {
+		return this;
+	}
+
+	@Override
+	public WriteStream<Buffer> setWriteQueueMaxSize(int writeQueueMaxSize) {
+		return this;
+	}
+
+	@Override
+	public WriteStream<Buffer> write(Buffer buffer) {
+		_recordParser.handle(buffer);
+
+		return this;
+	}
+
+	@Override
+	public boolean writeQueueFull() {
+		return false;
+	}
+
+	private final RecordParser _recordParser;
 
 }

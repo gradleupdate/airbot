@@ -1,7 +1,7 @@
 = Cheatsheets
 
-[[Coordinates]]
-== Coordinates
+[[Location]]
+== Location
 
 ++++
 ++++
@@ -11,6 +11,7 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[country]]`country`|`String`|-
 |[[latitude]]`latitude`|`Number (double)`|-
 |[[longitude]]`longitude`|`Number (double)`|-
 |===
@@ -28,6 +29,7 @@
 ^|Name | Type ^| Description
 |[[aqi]]`aqi`|`Number (int)`|-
 |[[city]]`city`|`String`|-
+|[[comments]]`comments`|`String`|-
 |[[mainPollutant]]`mainPollutant`|`String`|-
 |[[time]]`time`|`Number (long)`|-
 |[[values]]`values`|`Number (Double)`|-

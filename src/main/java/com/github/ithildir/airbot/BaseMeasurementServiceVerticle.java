@@ -20,43 +20,63 @@
  * SOFTWARE.
  */
 
-package com.github.ithildir.airbot.service;
+package com.github.ithildir.airbot;
 
-import com.github.ithildir.airbot.model.Measurement;
+import com.github.ithildir.airbot.service.MeasurementService;
 
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.Future;
 import io.vertx.serviceproxy.ProxyHelper;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Andrea Di Giorgi
  */
-@ProxyGen
-public interface MeasurementService {
+public abstract class BaseMeasurementServiceVerticle
+	extends BaseServiceVerticle<MeasurementService> {
 
-	public static String getAddress(String country) {
-		String address = MeasurementService.class.getName();
+	@Override
+	public void start(Future<Void> startFuture) throws Exception {
+		Future<Void> future = Future.future();
 
-		if (StringUtils.isNotBlank(country)) {
-			address += "." + country;
-		}
+		super.start(future);
 
-		return address;
+		future = future.compose(
+			v -> {
+				return _init();
+			});
+
+		future.setHandler(
+			asyncResult -> {
+				if (asyncResult.failed()) {
+					startFuture.fail(asyncResult.cause());
+
+					return;
+				}
+
+				startFuture.complete();
+			});
 	}
 
-	public static MeasurementService getInstance(Vertx vertx, String country) {
-		return ProxyHelper.createProxy(
-			MeasurementService.class, vertx, getAddress(country));
+	@Override
+	protected String getAddress() {
+		return MeasurementService.getAddress(getCountry());
 	}
 
-	public void getMeasurement(
-		double latitude, double longitude,
-		Handler<AsyncResult<Measurement>> handler);
+	protected abstract String getCountry();
 
-	public void init(Handler<AsyncResult<Void>> handler);
+	@Override
+	protected Class<MeasurementService> getServiceInterface() {
+		return MeasurementService.class;
+	}
+
+	private Future<Void> _init() {
+		Future<Void> future = Future.future();
+
+		MeasurementService measurementService = ProxyHelper.createProxy(
+			MeasurementService.class, vertx, getAddress());
+
+		measurementService.init(future.completer());
+
+		return future;
+	}
 
 }

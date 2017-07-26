@@ -26,14 +26,13 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import ai.api.model.Result;
 
-import com.github.ithildir.airbot.model.Coordinates;
+import com.github.ithildir.airbot.model.Location;
 import com.github.ithildir.airbot.model.Measurement;
 import com.github.ithildir.airbot.service.GeoService;
 import com.github.ithildir.airbot.service.MeasurementService;
 import com.github.ithildir.airbot.util.AirBotUtil;
 import com.github.ithildir.airbot.util.LanguageUtil;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -52,35 +51,42 @@ public class GetAirQualityApiAiFulfillmentBuilder
 	implements ApiAiFulfillmentBuilder {
 
 	public GetAirQualityApiAiFulfillmentBuilder(
-		GeoService geoService, MeasurementService measurementService) {
+		GeoService geoService,
+		Map<String, MeasurementService> measurementServices) {
 
 		_geoService = geoService;
-		_measurementService = measurementService;
+		_measurementServices = measurementServices;
 	}
 
 	@Override
 	public Future<Fulfillment> build(AIResponse aiResponse) {
 		Locale locale = new Locale(aiResponse.getLang());
-		String location = _getLocation(aiResponse);
+		String query = _getLocationQuery(aiResponse);
 
-		Future<Coordinates> coordinatesFuture = Future.future();
+		Future<Location> locationFuture = Future.future();
 
-		_geoService.getCoordinates(location, coordinatesFuture);
+		_geoService.getLocation(query, locationFuture);
 
-		Future<Measurement> measurementFuture = coordinatesFuture.compose(
-			coordinates -> {
+		Future<Measurement> measurementFuture = locationFuture.compose(
+			location -> {
 				Future<Measurement> future = Future.future();
 
-				_measurementService.getMeasurement(
-					coordinates.getLatitude(), coordinates.getLongitude(),
-					future);
+				MeasurementService measurementService =
+					_measurementServices.get(location.getCountry());
+
+				if (measurementService == null) {
+					measurementService = _measurementServices.get(null);
+				}
+
+				measurementService.getMeasurement(
+					location.getLatitude(), location.getLongitude(), future);
 
 				return future;
 			});
 
 		return measurementFuture.compose(
 			measurement -> {
-				return _getFulfillment(locale, location, measurement);
+				return _getFulfillment(locale, query, measurement);
 			});
 	}
 
@@ -122,14 +128,12 @@ public class GetAirQualityApiAiFulfillmentBuilder
 		return Future.succeededFuture(fulfillment);
 	}
 
-	private String _getLocation(AIResponse aiResponse) {
+	private String _getLocationQuery(AIResponse aiResponse) {
 		Result result = aiResponse.getResult();
 
 		Map<String, JsonElement> parameters = result.getParameters();
 
-		JsonArray jsonArray = _toJsonArray(parameters.get("location"));
-
-		JsonObject jsonObject = _toJsonObject(jsonArray.get(0));
+		JsonObject jsonObject = _toJsonObject(parameters.get("location"));
 
 		JsonElement jsonElement = jsonObject.get("business-name");
 
@@ -140,15 +144,11 @@ public class GetAirQualityApiAiFulfillmentBuilder
 		return jsonElement.getAsString();
 	}
 
-	private JsonArray _toJsonArray(JsonElement jsonElement) {
-		return jsonElement.getAsJsonArray();
-	}
-
 	private JsonObject _toJsonObject(JsonElement jsonElement) {
 		return jsonElement.getAsJsonObject();
 	}
 
 	private final GeoService _geoService;
-	private final MeasurementService _measurementService;
+	private final Map<String, MeasurementService> _measurementServices;
 
 }

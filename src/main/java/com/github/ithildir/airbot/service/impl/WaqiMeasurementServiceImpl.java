@@ -143,7 +143,7 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 		}
 
 		return new Measurement(
-			city, instant.toEpochMilli(), aqi, mainPollutant, values);
+			city, instant.toEpochMilli(), aqi, mainPollutant, values, null);
 	}
 
 	private <R, T> HttpResponse<T> _handleHttpResponse(

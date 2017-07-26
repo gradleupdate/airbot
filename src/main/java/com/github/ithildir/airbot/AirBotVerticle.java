@@ -43,6 +43,9 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Andrea Di Giorgi
  */
@@ -59,6 +62,7 @@ public class AirBotVerticle extends AbstractVerticle {
 			this::_startHttpServer);
 
 		CompositeFuture compositeFuture = CompositeFuture.all(
+			_deployVerticle(AirNowMeasurementServiceVerticle.class),
 			_deployVerticle(MapQuestGeoServiceVerticle.class),
 			_deployVerticle(WaqiMeasurementServiceVerticle.class),
 			httpServerFuture);
@@ -82,13 +86,21 @@ public class AirBotVerticle extends AbstractVerticle {
 		route.produces("application/json");
 
 		GeoService geoService = GeoService.getInstance(vertx);
-		MeasurementService measurementService = MeasurementService.getInstance(
-			vertx);
+
+		Map<String, MeasurementService> measurementServices = new HashMap<>();
+
+		measurementServices.put(
+			null, MeasurementService.getInstance(vertx, null));
+
+		for (String country : _MEASUREMENT_SERVICE_COUNTRIES) {
+			measurementServices.put(
+				country, MeasurementService.getInstance(vertx, country));
+		}
 
 		route.handler(
 			new ApiAiHandler(
 				new GetAirQualityApiAiFulfillmentBuilder(
-					geoService, measurementService)));
+					geoService, measurementServices)));
 	}
 
 	private Future<String> _deployVerticle(Class<? extends Verticle> clazz) {
@@ -132,5 +144,7 @@ public class AirBotVerticle extends AbstractVerticle {
 	}
 
 	private static final int _DEFAULT_PORT = 8080;
+
+	private static final String[] _MEASUREMENT_SERVICE_COUNTRIES = {"US"};
 
 }

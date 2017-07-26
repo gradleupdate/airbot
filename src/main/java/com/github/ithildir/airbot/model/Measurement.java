@@ -39,13 +39,14 @@ public class Measurement {
 
 	public Measurement(
 		String city, long time, int aqi, String mainPollutant,
-		Map<String, Double> values) {
+		Map<String, Double> values, String comments) {
 
 		_city = city;
 		_time = time;
 		_aqi = aqi;
 		_mainPollutant = mainPollutant;
 		_values = values;
+		_comments = comments;
 	}
 
 	public int getAqi() {
@@ -54,6 +55,10 @@ public class Measurement {
 
 	public String getCity() {
 		return _city;
+	}
+
+	public String getComments() {
+		return _comments;
 	}
 
 	public String getMainPollutant() {
@@ -74,6 +79,10 @@ public class Measurement {
 
 	public void setCity(String city) {
 		_city = city;
+	}
+
+	public void setComments(String comments) {
+		_comments = comments;
 	}
 
 	public void setMainPollutant(String mainPollutant) {
@@ -98,6 +107,7 @@ public class Measurement {
 
 	private int _aqi;
 	private String _city;
+	private String _comments;
 	private String _mainPollutant;
 	private long _time;
 	private Map<String, Double> _values;

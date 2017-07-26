@@ -22,7 +22,7 @@
 
 package com.github.ithildir.airbot.service;
 
-import com.github.ithildir.airbot.model.Coordinates;
+import com.github.ithildir.airbot.model.Location;
 
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.AsyncResult;
@@ -42,7 +42,7 @@ public interface GeoService {
 		return ProxyHelper.createProxy(GeoService.class, vertx, ADDRESS);
 	}
 
-	public void getCoordinates(
-		String location, Handler<AsyncResult<Coordinates>> handler);
+	public void getLocation(
+		String query, Handler<AsyncResult<Location>> handler);
 
 }

@@ -22,7 +22,7 @@
 
 package com.github.ithildir.airbot.service.impl;
 
-import com.github.ithildir.airbot.model.Coordinates;
+import com.github.ithildir.airbot.model.Location;
 import com.github.ithildir.airbot.service.GeoService;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -66,15 +66,15 @@ public class MapQuestGeoServiceImpl implements GeoService {
 	}
 
 	@Override
-	public void getCoordinates(
-		String location, Handler<AsyncResult<Coordinates>> handler) {
+	public void getLocation(
+		String query, Handler<AsyncResult<Location>> handler) {
 
 		HttpRequest<Buffer> httpRequest = _webClient.get(
 			"/geocoding/v1/address");
 
 		httpRequest.setQueryParam("ignoreLatLngInput", "true");
 		httpRequest.setQueryParam("key", Objects.requireNonNull(_key));
-		httpRequest.setQueryParam("location", location);
+		httpRequest.setQueryParam("location", query);
 		httpRequest.setQueryParam("maxResults", "1");
 		httpRequest.setQueryParam("thumbMaps", "false");
 
@@ -87,14 +87,14 @@ public class MapQuestGeoServiceImpl implements GeoService {
 					return;
 				}
 
-				Coordinates coordinates = _getCoordinates(
+				Location location = _getLocation(
 					httpResponse.bodyAsJsonObject());
 
-				handler.handle(Future.succeededFuture(coordinates));
+				handler.handle(Future.succeededFuture(location));
 			});
 	}
 
-	private Coordinates _getCoordinates(JsonObject jsonObject) {
+	private Location _getLocation(JsonObject jsonObject) {
 		JsonArray resultsJsonArray = jsonObject.getJsonArray("results");
 
 		JsonObject resultJsonObject = resultsJsonArray.getJsonObject(0);
@@ -110,7 +110,9 @@ public class MapQuestGeoServiceImpl implements GeoService {
 		double latitude = latLngJsonObject.getDouble("lat");
 		double longitude = latLngJsonObject.getDouble("lng");
 
-		return new Coordinates(latitude, longitude);
+		String country = locationJsonObject.getString("adminArea1");
+
+		return new Location(latitude, longitude, country);
 	}
 
 	private <R, T> HttpResponse<T> _handleHttpResponse(

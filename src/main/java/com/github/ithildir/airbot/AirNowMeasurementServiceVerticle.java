@@ -20,43 +20,27 @@
  * SOFTWARE.
  */
 
-package com.github.ithildir.airbot.service;
+package com.github.ithildir.airbot;
 
-import com.github.ithildir.airbot.model.Measurement;
+import com.github.ithildir.airbot.service.MeasurementService;
+import com.github.ithildir.airbot.service.impl.AirNowMeasurementServiceImpl;
 
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.serviceproxy.ProxyHelper;
-
-import org.apache.commons.lang3.StringUtils;
+import io.vertx.core.json.JsonObject;
 
 /**
  * @author Andrea Di Giorgi
  */
-@ProxyGen
-public interface MeasurementService {
+public class AirNowMeasurementServiceVerticle
+	extends BaseMeasurementServiceVerticle {
 
-	public static String getAddress(String country) {
-		String address = MeasurementService.class.getName();
-
-		if (StringUtils.isNotBlank(country)) {
-			address += "." + country;
-		}
-
-		return address;
+	@Override
+	protected String getCountry() {
+		return "US";
 	}
 
-	public static MeasurementService getInstance(Vertx vertx, String country) {
-		return ProxyHelper.createProxy(
-			MeasurementService.class, vertx, getAddress(country));
+	@Override
+	protected MeasurementService getServiceImpl(JsonObject configJsonObject) {
+		return new AirNowMeasurementServiceImpl(vertx);
 	}
-
-	public void getMeasurement(
-		double latitude, double longitude,
-		Handler<AsyncResult<Measurement>> handler);
-
-	public void init(Handler<AsyncResult<Void>> handler);
 
 }

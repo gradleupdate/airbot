@@ -32,11 +32,11 @@ import io.vertx.core.json.JsonObject;
  * @author Andrea Di Giorgi
  */
 public class WaqiMeasurementServiceVerticle
-	extends BaseServiceVerticle<MeasurementService> {
+	extends BaseMeasurementServiceVerticle {
 
 	@Override
-	protected String getAddress() {
-		return MeasurementService.ADDRESS;
+	protected String getCountry() {
+		return null;
 	}
 
 	@Override
@@ -44,11 +44,6 @@ public class WaqiMeasurementServiceVerticle
 		String key = configJsonObject.getString(ConfigKeys.WAQI_KEY);
 
 		return new WaqiMeasurementServiceImpl(vertx, key);
-	}
-
-	@Override
-	protected Class<MeasurementService> getServiceInterface() {
-		return MeasurementService.class;
 	}
 
 }

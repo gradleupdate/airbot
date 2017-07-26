@@ -29,23 +29,28 @@ import io.vertx.core.json.JsonObject;
  * @author Andrea Di Giorgi
  */
 @DataObject(generateConverter = true)
-public class Coordinates {
+public class Location {
 
-	public Coordinates(double latitude, double longitude) {
+	public Location(double latitude, double longitude, String country) {
 		_latitude = latitude;
 		_longitude = longitude;
+		_country = country;
 	}
 
-	public Coordinates(JsonObject jsonObject) {
-		CoordinatesConverter.fromJson(jsonObject, this);
+	public Location(JsonObject jsonObject) {
+		LocationConverter.fromJson(jsonObject, this);
 	}
 
-	public double getDistance(Coordinates coordinates) {
+	public String getCountry() {
+		return _country;
+	}
+
+	public double getDistance(Location location) {
 		double lat1 = Math.toRadians(getLatitude());
 		double lon1 = Math.toRadians(getLongitude());
 
-		double lat2 = Math.toRadians(coordinates.getLatitude());
-		double lon2 = Math.toRadians(coordinates.getLongitude());
+		double lat2 = Math.toRadians(location.getLatitude());
+		double lon2 = Math.toRadians(location.getLongitude());
 
 		return Math.acos(
 			Math.sin(lat1) * Math.sin(lat2) +
@@ -61,6 +66,10 @@ public class Coordinates {
 		return _longitude;
 	}
 
+	public void setCountry(String country) {
+		_country = country;
+	}
+
 	public void setLatitude(double latitude) {
 		_latitude = latitude;
 	}
@@ -72,13 +81,14 @@ public class Coordinates {
 	public JsonObject toJson() {
 		JsonObject jsonObject = new JsonObject();
 
-		CoordinatesConverter.toJson(this, jsonObject);
+		LocationConverter.toJson(this, jsonObject);
 
 		return jsonObject;
 	}
 
 	private static final double _EARTH_RADIUS = 6371;
 
+	private String _country;
 	private double _latitude;
 	private double _longitude;
 
