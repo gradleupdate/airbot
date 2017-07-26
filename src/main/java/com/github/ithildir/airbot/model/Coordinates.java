@@ -40,6 +40,19 @@ public class Coordinates {
 		CoordinatesConverter.fromJson(jsonObject, this);
 	}
 
+	public double getDistance(Coordinates coordinates) {
+		double lat1 = Math.toRadians(getLatitude());
+		double lon1 = Math.toRadians(getLongitude());
+
+		double lat2 = Math.toRadians(coordinates.getLatitude());
+		double lon2 = Math.toRadians(coordinates.getLongitude());
+
+		return Math.acos(
+			Math.sin(lat1) * Math.sin(lat2) +
+				Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)) *
+				_EARTH_RADIUS;
+	}
+
 	public double getLatitude() {
 		return _latitude;
 	}
@@ -63,6 +76,8 @@ public class Coordinates {
 
 		return jsonObject;
 	}
+
+	private static final double _EARTH_RADIUS = 6371;
 
 	private double _latitude;
 	private double _longitude;
