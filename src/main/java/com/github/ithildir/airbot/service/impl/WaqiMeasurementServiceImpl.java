@@ -141,9 +141,9 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 			city, instant.toEpochMilli(), aqi, mainPollutant, values);
 	}
 
-	private <T> HttpResponse<Buffer> _handleHttpResponse(
-		Handler<AsyncResult<T>> handler,
-		AsyncResult<HttpResponse<Buffer>> asyncResult) {
+	private <R, T> HttpResponse<T> _handleHttpResponse(
+		Handler<AsyncResult<R>> handler,
+		AsyncResult<HttpResponse<T>> asyncResult) {
 
 		if (asyncResult.failed()) {
 			handler.handle(Future.failedFuture(asyncResult.cause()));
@@ -151,7 +151,7 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 			return null;
 		}
 
-		HttpResponse<Buffer> httpResponse = asyncResult.result();
+		HttpResponse<T> httpResponse = asyncResult.result();
 
 		int statusCode = httpResponse.statusCode();
 
