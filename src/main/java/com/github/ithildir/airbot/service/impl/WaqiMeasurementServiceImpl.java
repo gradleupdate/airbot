@@ -92,6 +92,11 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 			});
 	}
 
+	@Override
+	public void init(Handler<AsyncResult<Void>> handler) {
+		handler.handle(Future.succeededFuture());
+	}
+
 	private Measurement _getMeasurement(JsonObject jsonObject) {
 		String status = jsonObject.getString("status");
 

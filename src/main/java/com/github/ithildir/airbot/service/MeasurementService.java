@@ -47,4 +47,6 @@ public interface MeasurementService {
 		double latitude, double longitude,
 		Handler<AsyncResult<Measurement>> handler);
 
+	public void init(Handler<AsyncResult<Void>> handler);
+
 }
