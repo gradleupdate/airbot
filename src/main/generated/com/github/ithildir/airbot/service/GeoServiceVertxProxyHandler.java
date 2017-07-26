@@ -39,7 +39,9 @@ import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
-import com.github.ithildir.airbot.model.Coordinates;
+import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.model.Location;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -120,8 +122,9 @@ public class GeoServiceVertxProxyHandler extends ProxyHandler {
       }
       accessed();
       switch (action) {
-        case "getCoordinates": {
-          service.getCoordinates((java.lang.String)json.getValue("location"), res -> {
+
+        case "getLocation": {
+          service.getLocation((java.lang.String)json.getValue("query"), res -> {
             if (res.failed()) {
               if (res.cause() instanceof ServiceException) {
                 msg.reply(res.cause());

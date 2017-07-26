@@ -20,13 +20,16 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 /**
- * Converter for {@link com.github.ithildir.airbot.model.Coordinates}.
+ * Converter for {@link com.github.ithildir.airbot.model.Location}.
  *
- * NOTE: This class has been automatically generated from the {@link com.github.ithildir.airbot.model.Coordinates} original class using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link com.github.ithildir.airbot.model.Location} original class using Vert.x codegen.
  */
-public class CoordinatesConverter {
+public class LocationConverter {
 
-  public static void fromJson(JsonObject json, Coordinates obj) {
+  public static void fromJson(JsonObject json, Location obj) {
+    if (json.getValue("country") instanceof String) {
+      obj.setCountry((String)json.getValue("country"));
+    }
     if (json.getValue("latitude") instanceof Number) {
       obj.setLatitude(((Number)json.getValue("latitude")).doubleValue());
     }
@@ -35,7 +38,10 @@ public class CoordinatesConverter {
     }
   }
 
-  public static void toJson(Coordinates obj, JsonObject json) {
+  public static void toJson(Location obj, JsonObject json) {
+    if (obj.getCountry() != null) {
+      json.put("country", obj.getCountry());
+    }
     json.put("latitude", obj.getLatitude());
     json.put("longitude", obj.getLongitude());
   }

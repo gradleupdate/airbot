@@ -32,6 +32,8 @@ import java.util.function.Function;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
+import com.github.ithildir.airbot.service.MeasurementService;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import com.github.ithildir.airbot.model.Measurement;
 import io.vertx.core.Handler;
@@ -78,6 +80,23 @@ public class MeasurementServiceVertxEBProxy implements MeasurementService {
       } else {
         handler.handle(Future.succeededFuture(res.result().body() == null ? null : new Measurement(res.result().body())));
                       }
+    });
+  }
+
+  public void init(Handler<AsyncResult<Void>> handler) {
+    if (closed) {
+      handler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return;
+    }
+    JsonObject _json = new JsonObject();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "init");
+    _vertx.eventBus().<Void>send(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        handler.handle(Future.failedFuture(res.cause()));
+      } else {
+        handler.handle(Future.succeededFuture(res.result().body()));
+      }
     });
   }
 

@@ -33,6 +33,9 @@ public class MeasurementConverter {
     if (json.getValue("city") instanceof String) {
       obj.setCity((String)json.getValue("city"));
     }
+    if (json.getValue("comments") instanceof String) {
+      obj.setComments((String)json.getValue("comments"));
+    }
     if (json.getValue("mainPollutant") instanceof String) {
       obj.setMainPollutant((String)json.getValue("mainPollutant"));
     }
@@ -53,6 +56,9 @@ public class MeasurementConverter {
     json.put("aqi", obj.getAqi());
     if (obj.getCity() != null) {
       json.put("city", obj.getCity());
+    }
+    if (obj.getComments() != null) {
+      json.put("comments", obj.getComments());
     }
     if (obj.getMainPollutant() != null) {
       json.put("mainPollutant", obj.getMainPollutant());

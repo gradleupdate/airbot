@@ -39,6 +39,8 @@ import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
+import com.github.ithildir.airbot.service.MeasurementService;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import com.github.ithildir.airbot.model.Measurement;
 import io.vertx.core.Handler;
@@ -120,6 +122,8 @@ public class MeasurementServiceVertxProxyHandler extends ProxyHandler {
       }
       accessed();
       switch (action) {
+
+
         case "getMeasurement": {
           service.getMeasurement(json.getValue("latitude") == null ? null : (json.getDouble("latitude").doubleValue()), json.getValue("longitude") == null ? null : (json.getDouble("longitude").doubleValue()), res -> {
             if (res.failed()) {
@@ -132,6 +136,10 @@ public class MeasurementServiceVertxProxyHandler extends ProxyHandler {
               msg.reply(res.result() == null ? null : res.result().toJson());
             }
          });
+          break;
+        }
+        case "init": {
+          service.init(createHandler(msg));
           break;
         }
         default: {

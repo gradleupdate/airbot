@@ -32,7 +32,9 @@ import java.util.function.Function;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
-import com.github.ithildir.airbot.model.Coordinates;
+import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.model.Location;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -62,20 +64,20 @@ public class GeoServiceVertxEBProxy implements GeoService {
     } catch (IllegalStateException ex) {}
   }
 
-  public void getCoordinates(String location, Handler<AsyncResult<Coordinates>> handler) {
+  public void getLocation(String query, Handler<AsyncResult<Location>> handler) {
     if (closed) {
       handler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
-    _json.put("location", location);
+    _json.put("query", query);
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getCoordinates");
+    _deliveryOptions.addHeader("action", "getLocation");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         handler.handle(Future.failedFuture(res.cause()));
       } else {
-        handler.handle(Future.succeededFuture(res.result().body() == null ? null : new Coordinates(res.result().body())));
+        handler.handle(Future.succeededFuture(res.result().body() == null ? null : new Location(res.result().body())));
                       }
     });
   }
