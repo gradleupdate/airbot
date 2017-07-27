@@ -79,7 +79,7 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 		httpRequest.send(
 			asyncResult -> {
 				HttpResponse<Buffer> httpResponse = _handleHttpResponse(
-					handler, asyncResult);
+					asyncResult, handler);
 
 				if (httpResponse == null) {
 					return;
@@ -147,8 +147,8 @@ public class WaqiMeasurementServiceImpl implements MeasurementService {
 	}
 
 	private <R, T> HttpResponse<T> _handleHttpResponse(
-		Handler<AsyncResult<R>> handler,
-		AsyncResult<HttpResponse<T>> asyncResult) {
+		AsyncResult<HttpResponse<T>> asyncResult,
+		Handler<AsyncResult<R>> handler) {
 
 		if (asyncResult.failed()) {
 			handler.handle(Future.failedFuture(asyncResult.cause()));
