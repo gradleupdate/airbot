@@ -37,6 +37,7 @@ dependencies {
 	compile group: "io.vertx", name: "vertx-web-client", version: "3.4.2"
 	compile group: "org.apache.commons", name: "commons-lang3", version: "3.6"
 	compile group: "org.ocpsoft.prettytime", name: "prettytime", version: "4.0.1.Final"
+	compile group: "org.slf4j", name: "slf4j-jdk14", version: "1.7.25"
 
 	compileOnly group: "io.vertx", name: "vertx-codegen", version: "3.4.2"
 
