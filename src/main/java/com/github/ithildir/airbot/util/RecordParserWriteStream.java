@@ -43,6 +43,9 @@ public class RecordParserWriteStream implements WriteStream<Buffer> {
 
 	@Override
 	public void end() {
+
+		// Nothing to do
+
 	}
 
 	@Override
