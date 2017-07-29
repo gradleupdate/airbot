@@ -1,0 +1,10 @@
+{
+	"alias": "airbot",
+	"env": {
+		"mapquest_key": "@airbot-mapquest-key",
+		"password": "@airbot-password",
+		"username": "@airbot-username",
+		"waqi_key": "@airbot-waqi-key"
+	},
+	"name": "airbot"
+}
