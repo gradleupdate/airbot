@@ -54,6 +54,9 @@ public class SingleUserAuthProvider implements AuthProvider {
 
 			@Override
 			public void setAuthProvider(AuthProvider authProvider) {
+
+				// Nothing to do
+
 			}
 
 			@Override
