@@ -31,8 +31,7 @@ import io.vertx.core.json.JsonObject;
 /**
  * @author Andrea Di Giorgi
  */
-public class MapQuestGeoServiceVerticle
-	extends BaseServiceVerticle<GeoService> {
+public class GeoServiceVerticle extends BaseServiceVerticle<GeoService> {
 
 	@Override
 	protected String getAddress() {

@@ -63,7 +63,7 @@ public class AirBotVerticle extends AbstractVerticle {
 
 		CompositeFuture compositeFuture = CompositeFuture.all(
 			_deployVerticle(AirNowMeasurementServiceVerticle.class),
-			_deployVerticle(MapQuestGeoServiceVerticle.class),
+			_deployVerticle(GeoServiceVerticle.class),
 			_deployVerticle(WaqiMeasurementServiceVerticle.class),
 			httpServerFuture);
 
