@@ -73,7 +73,7 @@ public class MapQuestGeoServiceImpl implements GeoService {
 			"/geocoding/v1/address");
 
 		httpRequest.setQueryParam("ignoreLatLngInput", "true");
-		httpRequest.setQueryParam("key", Objects.requireNonNull(_key));
+		httpRequest.setQueryParam("key", _key);
 		httpRequest.setQueryParam("location", query);
 		httpRequest.setQueryParam("maxResults", "1");
 		httpRequest.setQueryParam("thumbMaps", "false");
