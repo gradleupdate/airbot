@@ -25,6 +25,8 @@ package com.github.ithildir.airbot.server.api.ai;
 import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 
+import com.google.gson.JsonObject;
+
 import io.vertx.core.Future;
 
 /**
@@ -32,7 +34,8 @@ import io.vertx.core.Future;
  */
 public interface ApiAiFulfillmentBuilder {
 
-	public Future<Fulfillment> build(AIResponse aiResponse);
+	public Future<Fulfillment> build(
+		AIResponse aiResponse, JsonObject responseJsonObject);
 
 	public String getAction();
 

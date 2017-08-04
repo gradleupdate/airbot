@@ -59,7 +59,9 @@ public class GetAirQualityApiAiFulfillmentBuilder
 	}
 
 	@Override
-	public Future<Fulfillment> build(AIResponse aiResponse) {
+	public Future<Fulfillment> build(
+		AIResponse aiResponse, JsonObject responseJsonObject) {
+
 		Locale locale = new Locale(aiResponse.getLang());
 		String query = _getLocationQuery(aiResponse);
 

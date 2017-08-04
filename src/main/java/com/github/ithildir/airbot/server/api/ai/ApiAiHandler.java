@@ -28,6 +28,8 @@ import ai.api.model.Fulfillment;
 import ai.api.model.Result;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -57,8 +59,11 @@ public class ApiAiHandler implements Handler<RoutingContext> {
 
 	@Override
 	public void handle(RoutingContext routingContext) {
-		AIResponse aiResponse = _gson.fromJson(
-			routingContext.getBodyAsString(), AIResponse.class);
+		String json = routingContext.getBodyAsString();
+
+		JsonObject responseJsonObject = (JsonObject)_jsonParser.parse(json);
+
+		AIResponse aiResponse = _gson.fromJson(json, AIResponse.class);
 
 		Result result = aiResponse.getResult();
 
@@ -67,7 +72,8 @@ public class ApiAiHandler implements Handler<RoutingContext> {
 		ApiAiFulfillmentBuilder apiAiFulfillmentBuilder =
 			_apiAiFulfillmentBuilders.get(action);
 
-		Future<Fulfillment> future = apiAiFulfillmentBuilder.build(aiResponse);
+		Future<Fulfillment> future = apiAiFulfillmentBuilder.build(
+			aiResponse, responseJsonObject);
 
 		HttpServerResponse httpServerResponse = routingContext.response();
 
@@ -91,6 +97,7 @@ public class ApiAiHandler implements Handler<RoutingContext> {
 		ApiAiHandler.class);
 
 	private static final Gson _gson;
+	private static final JsonParser _jsonParser = new JsonParser();
 
 	static {
 		GsonFactory gsonFactory = GsonFactory.getDefaultFactory();
