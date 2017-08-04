@@ -65,7 +65,7 @@ public class GetAirQualityApiAiFulfillmentBuilder
 
 		Future<Location> locationFuture = Future.future();
 
-		_geoService.getLocation(query, locationFuture);
+		_geoService.getLocationByQuery(query, locationFuture);
 
 		Future<Measurement> measurementFuture = locationFuture.compose(
 			location -> {

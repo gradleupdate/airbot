@@ -66,17 +66,38 @@ public class MapQuestGeoServiceImpl implements GeoService {
 	}
 
 	@Override
-	public void getLocation(
+	public void getLocationByCoordinates(
+		double latitude, double longitude,
+		Handler<AsyncResult<Location>> handler) {
+
+		HttpRequest<Buffer> httpRequest = _webClient.get(
+			"/geocoding/v1/reverse");
+
+		httpRequest.setQueryParam("location", latitude + "," + longitude);
+
+		_getLocation(httpRequest, handler);
+	}
+
+	@Override
+	public void getLocationByQuery(
 		String query, Handler<AsyncResult<Location>> handler) {
 
 		HttpRequest<Buffer> httpRequest = _webClient.get(
 			"/geocoding/v1/address");
 
 		httpRequest.setQueryParam("ignoreLatLngInput", "true");
-		httpRequest.setQueryParam("key", _key);
 		httpRequest.setQueryParam("location", query);
 		httpRequest.setQueryParam("maxResults", "1");
 		httpRequest.setQueryParam("thumbMaps", "false");
+
+		_getLocation(httpRequest, handler);
+	}
+
+	private void _getLocation(
+		HttpRequest<Buffer> httpRequest,
+		Handler<AsyncResult<Location>> handler) {
+
+		httpRequest.setQueryParam("key", _key);
 
 		httpRequest.send(
 			asyncResult -> {

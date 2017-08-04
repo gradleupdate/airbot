@@ -42,7 +42,11 @@ public interface GeoService {
 		return ProxyHelper.createProxy(GeoService.class, vertx, ADDRESS);
 	}
 
-	public void getLocation(
+	public void getLocationByCoordinates(
+		double latitude, double longitude,
+		Handler<AsyncResult<Location>> handler);
+
+	public void getLocationByQuery(
 		String query, Handler<AsyncResult<Location>> handler);
 
 }
