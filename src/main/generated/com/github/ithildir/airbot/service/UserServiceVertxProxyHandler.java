@@ -16,7 +16,7 @@
 
 package com.github.ithildir.airbot.service;
 
-import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.service.UserService;
 import io.vertx.core.Vertx;
 import io.vertx.core.Handler;
 import io.vertx.core.AsyncResult;
@@ -39,7 +39,7 @@ import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
-import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.service.UserService;
 import com.github.ithildir.airbot.model.Location;
 import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
@@ -50,25 +50,25 @@ import io.vertx.core.Handler;
   @author Roger the Robot
 */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class GeoServiceVertxProxyHandler extends ProxyHandler {
+public class UserServiceVertxProxyHandler extends ProxyHandler {
 
   public static final long DEFAULT_CONNECTION_TIMEOUT = 5 * 60; // 5 minutes 
 
   private final Vertx vertx;
-  private final GeoService service;
+  private final UserService service;
   private final long timerID;
   private long lastAccessed;
   private final long timeoutSeconds;
 
-  public GeoServiceVertxProxyHandler(Vertx vertx, GeoService service) {
+  public UserServiceVertxProxyHandler(Vertx vertx, UserService service) {
     this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);
   }
 
-  public GeoServiceVertxProxyHandler(Vertx vertx, GeoService service, long timeoutInSecond) {
+  public UserServiceVertxProxyHandler(Vertx vertx, UserService service, long timeoutInSecond) {
     this(vertx, service, true, timeoutInSecond);
   }
 
-  public GeoServiceVertxProxyHandler(Vertx vertx, GeoService service, boolean topLevel, long timeoutSeconds) {
+  public UserServiceVertxProxyHandler(Vertx vertx, UserService service, boolean topLevel, long timeoutSeconds) {
     this.vertx = vertx;
     this.service = service;
     this.timeoutSeconds = timeoutSeconds;
@@ -123,8 +123,8 @@ public class GeoServiceVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
 
-        case "getLocationByCoordinates": {
-          service.getLocationByCoordinates(json.getValue("latitude") == null ? null : (json.getDouble("latitude").doubleValue()), json.getValue("longitude") == null ? null : (json.getDouble("longitude").doubleValue()), res -> {
+        case "getUserLocation": {
+          service.getUserLocation((java.lang.String)json.getValue("userId"), res -> {
             if (res.failed()) {
               if (res.cause() instanceof ServiceException) {
                 msg.reply(res.cause());
@@ -137,18 +137,8 @@ public class GeoServiceVertxProxyHandler extends ProxyHandler {
          });
           break;
         }
-        case "getLocationByQuery": {
-          service.getLocationByQuery((java.lang.String)json.getValue("query"), res -> {
-            if (res.failed()) {
-              if (res.cause() instanceof ServiceException) {
-                msg.reply(res.cause());
-              } else {
-                msg.reply(new ServiceException(-1, res.cause().getMessage()));
-              }
-            } else {
-              msg.reply(res.result() == null ? null : res.result().toJson());
-            }
-         });
+        case "updateUserLocation": {
+          service.updateUserLocation((java.lang.String)json.getValue("userId"), json.getValue("latitude") == null ? null : (json.getDouble("latitude").doubleValue()), json.getValue("longitude") == null ? null : (json.getDouble("longitude").doubleValue()), (java.lang.String)json.getValue("country"), createHandler(msg));
           break;
         }
         default: {

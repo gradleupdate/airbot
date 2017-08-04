@@ -16,7 +16,7 @@
 
 package com.github.ithildir.airbot.service;
 
-import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.service.UserService;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.Future;
@@ -32,7 +32,7 @@ import java.util.function.Function;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
-import com.github.ithildir.airbot.service.GeoService;
+import com.github.ithildir.airbot.service.UserService;
 import com.github.ithildir.airbot.model.Location;
 import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
@@ -43,18 +43,18 @@ import io.vertx.core.Handler;
   @author Roger the Robot
 */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class GeoServiceVertxEBProxy implements GeoService {
+public class UserServiceVertxEBProxy implements UserService {
 
   private Vertx _vertx;
   private String _address;
   private DeliveryOptions _options;
   private boolean closed;
 
-  public GeoServiceVertxEBProxy(Vertx vertx, String address) {
+  public UserServiceVertxEBProxy(Vertx vertx, String address) {
     this(vertx, address, null);
   }
 
-  public GeoServiceVertxEBProxy(Vertx vertx, String address, DeliveryOptions options) {
+  public UserServiceVertxEBProxy(Vertx vertx, String address, DeliveryOptions options) {
     this._vertx = vertx;
     this._address = address;
     this._options = options;
@@ -64,16 +64,15 @@ public class GeoServiceVertxEBProxy implements GeoService {
     } catch (IllegalStateException ex) {}
   }
 
-  public void getLocationByCoordinates(double latitude, double longitude, Handler<AsyncResult<Location>> handler) {
+  public void getUserLocation(String userId, Handler<AsyncResult<Location>> handler) {
     if (closed) {
       handler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
-    _json.put("latitude", latitude);
-    _json.put("longitude", longitude);
+    _json.put("userId", userId);
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getLocationByCoordinates");
+    _deliveryOptions.addHeader("action", "getUserLocation");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         handler.handle(Future.failedFuture(res.cause()));
@@ -83,21 +82,24 @@ public class GeoServiceVertxEBProxy implements GeoService {
     });
   }
 
-  public void getLocationByQuery(String query, Handler<AsyncResult<Location>> handler) {
+  public void updateUserLocation(String userId, double latitude, double longitude, String country, Handler<AsyncResult<Void>> handler) {
     if (closed) {
       handler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
-    _json.put("query", query);
+    _json.put("userId", userId);
+    _json.put("latitude", latitude);
+    _json.put("longitude", longitude);
+    _json.put("country", country);
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getLocationByQuery");
-    _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
+    _deliveryOptions.addHeader("action", "updateUserLocation");
+    _vertx.eventBus().<Void>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         handler.handle(Future.failedFuture(res.cause()));
       } else {
-        handler.handle(Future.succeededFuture(res.result().body() == null ? null : new Location(res.result().body())));
-                      }
+        handler.handle(Future.succeededFuture(res.result().body()));
+      }
     });
   }
 
