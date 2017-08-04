@@ -47,6 +47,6 @@ public interface UserService {
 
 	public void updateUserLocation(
 		String userId, double latitude, double longitude, String country,
-		Handler<AsyncResult<Location>> handler);
+		Handler<AsyncResult<Void>> handler);
 
 }

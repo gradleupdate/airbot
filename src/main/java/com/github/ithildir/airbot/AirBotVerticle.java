@@ -28,6 +28,7 @@ import com.github.ithildir.airbot.server.api.ai.ApiAiHandler;
 import com.github.ithildir.airbot.server.api.ai.GetAirQualityApiAiFulfillmentBuilder;
 import com.github.ithildir.airbot.service.GeoService;
 import com.github.ithildir.airbot.service.MeasurementService;
+import com.github.ithildir.airbot.service.UserService;
 
 import io.vertx.config.ConfigRetriever;
 import io.vertx.core.AbstractVerticle;
@@ -98,10 +99,12 @@ public class AirBotVerticle extends AbstractVerticle {
 				country, MeasurementService.getInstance(vertx, country));
 		}
 
+		UserService userService = UserService.getInstance(vertx);
+
 		route.handler(
 			new ApiAiHandler(
 				new GetAirQualityApiAiFulfillmentBuilder(
-					geoService, measurementServices)));
+					geoService, measurementServices, userService)));
 	}
 
 	private Future<String> _deployVerticle(Class<? extends Verticle> clazz) {
