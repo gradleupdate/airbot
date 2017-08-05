@@ -74,7 +74,7 @@ public abstract class BaseMeasurementServiceVerticle
 		MeasurementService measurementService = ProxyHelper.createProxy(
 			MeasurementService.class, vertx, getAddress());
 
-		measurementService.init(future.completer());
+		measurementService.init(future);
 
 		return future;
 	}
