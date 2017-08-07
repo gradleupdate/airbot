@@ -4,5 +4,6 @@
 [![Codacy](https://api.codacy.com/project/badge/Grade/d0348a9460594a9a831e11f82f84489c)](https://www.codacy.com/app/Ithildir/airbot?utm_source=github.com&utm_medium=referral&utm_content=Ithildir/airbot&utm_campaign=badger)
 [![Codecov](https://codecov.io/gh/Ithildir/airbot/branch/master/graph/badge.svg)](https://codecov.io/gh/Ithildir/airbot)
 [![Dependency Status](https://www.versioneye.com/user/projects/5976ac1f6725bd005439ac05/badge.svg?style=shield)](https://www.versioneye.com/user/projects/5976ac1f6725bd005439ac05)
+[![Gradle Status](https://gradleupdate.appspot.com/Ithildir/airbot/status.svg)](https://gradleupdate.appspot.com/Ithildir/airbot/status)
 
 WIP
